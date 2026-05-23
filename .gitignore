@@ -1,0 +1,14 @@
+# Xcode - build artifacts
+*.xcworkspace/xcuserdata/
+*.xcuserdatad/
+DerivedData/
+
+# SPM
+.build/
+
+# macOS
+.DS_Store
+
+# IDE configs (not project code)
+.claude/
+.vscode/
