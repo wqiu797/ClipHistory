@@ -17,8 +17,9 @@ final class StatusBarController: NSObject, NSApplicationDelegate {
                 systemSymbolName: "clipboard",
                 accessibilityDescription: "ClipHistory"
             )
-            button.action = #selector(togglePopover)
             button.target = self
+            button.action = #selector(handleClick)
+            button.sendAction(on: [.leftMouseUp, .rightMouseUp])
         }
 
         let contentView = PopoverRootView()
@@ -31,14 +32,35 @@ final class StatusBarController: NSObject, NSApplicationDelegate {
         CleanupScheduler.shared.start()
     }
 
-    @objc private func togglePopover() {
+    @objc private func handleClick() {
+        guard let event = NSApp.currentEvent else { return }
+
+        if event.type == .rightMouseUp {
+            showContextMenu()
+        } else {
+            togglePopover()
+        }
+    }
+
+    private func showContextMenu() {
+        let menu = NSMenu()
+        menu.addItem(NSMenuItem(
+            title: "Quit ClipHistory",
+            action: #selector(NSApplication.terminate(_:)),
+            keyEquivalent: "q"
+        ))
+        statusItem.menu = menu
+        statusItem.button?.performClick(nil)
+        statusItem.menu = nil
+    }
+
+    private func togglePopover() {
         guard let button = statusItem.button else { return }
 
         if popover.isShown {
             popover.performClose(nil)
         } else {
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-            // Ensure popover becomes key so it can receive keyboard events
             popover.contentViewController?.view.window?.makeKey()
         }
     }

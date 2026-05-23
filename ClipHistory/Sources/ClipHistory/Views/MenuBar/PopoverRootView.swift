@@ -65,6 +65,16 @@ struct PopoverRootView: View {
 
             // Footer
             HStack {
+                Button {
+                    NSApplication.shared.terminate(nil)
+                } label: {
+                    Image(systemName: "power")
+                        .font(.system(size: 11))
+                        .foregroundColor(.secondary)
+                }
+                .buttonStyle(.plain)
+                .help("Quit ClipHistory")
+
                 Text("\(viewModel.itemCount) items")
                     .font(.caption)
                     .foregroundColor(.secondary)
