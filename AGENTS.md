@@ -1,0 +1,70 @@
+# Repository Guidelines
+
+## Project Structure & Module Organization
+
+This repository contains a native macOS menu bar app named ClipHistory.
+
+- `ClipHistory/Sources/ClipHistory/` contains all Swift source code.
+- `Models/`, `Database/`, `Services/`, and `ViewModels/` hold app logic.
+- `Views/` contains SwiftUI/AppKit UI code, grouped by feature (`MenuBar`, `Cards`, `Search`, `Settings`, `Common`).
+- `Resources/` contains `Info.plist` and `Assets.xcassets`.
+- `ClipHistory/project.yml` is the source of truth for the generated Xcode project.
+- `ClipHistory/Package.swift` declares Swift Package Manager dependencies.
+
+There is no dedicated test target yet. Add future tests under a `ClipHistoryTests/` target.
+
+## Build, Test, and Development Commands
+
+Run commands from the repository root unless noted.
+
+```bash
+cd ClipHistory && xcodegen generate
+```
+
+Regenerates `ClipHistory.xcodeproj` after adding or removing Swift files.
+
+```bash
+cd ClipHistory && ./build.sh
+```
+
+Builds Release, stops any running ClipHistory instance, installs to `/Applications`, and launches the app.
+
+```bash
+cd ClipHistory && xcodebuild -project ClipHistory.xcodeproj -scheme ClipHistory -configuration Debug build
+```
+
+Performs a quick Debug build without installing.
+
+## Coding Style & Naming Conventions
+
+Use Swift 6 conventions with 4-space indentation. Types use `UpperCamelCase`; methods, properties, and local variables use `lowerCamelCase`. Keep files focused on one main type where possible.
+
+Prefer SwiftUI for UI, but use AppKit where macOS menu bar behavior requires it. Singletons currently use `@unchecked Sendable` where needed for Swift 6 concurrency.
+
+## Testing Guidelines
+
+No automated test suite exists yet. For now, verify manually:
+
+- text clipboard capture and deduplication
+- image capture, thumbnail display, and copy-back
+- search, pin, delete, and retention behavior
+- menu bar left click, right-click Quit, footer Quit, and settings window
+
+When adding tests, prefer focused unit tests for DAO/database behavior and service-level tests for cleanup and hashing.
+
+## Commit & Pull Request Guidelines
+
+Commit messages in this repo use imperative, concise English subjects, for example:
+
+- `Add README and MIT license`
+- `Automate build script to install and launch after compilation`
+
+Use a short subject line plus an explanatory body when the change affects user workflow. Pull requests should include a summary, manual test notes, and screenshots or screen recordings for UI changes.
+
+## Architecture Notes & Pitfalls
+
+`ClipboardMonitor` polls `NSPasteboard.general.changeCount` every 0.5 seconds. When copying back to the clipboard, call `ClipboardMonitor.markOwnWrite()` after writing, not before.
+
+For image PNG conversion, use `NSImage.tiffRepresentation` to `NSBitmapImageRep(data:)`; direct `cgImage` conversion can produce transparent images.
+
+`SettingsWindowController` manually creates an `NSWindow` because SwiftUI `Settings` scenes do not behave reliably in this menu-bar-only app.

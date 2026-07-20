@@ -1,0 +1,52 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Build & Run
+
+- **Prerequisite:** `brew install xcodegen` (project generator)
+- **Minimum deployment:** macOS 14.0, Swift 6.0
+
+```bash
+# Generate Xcode project (after adding/removing files)
+cd ClipHistory && xcodegen generate
+
+# Build, install to /Applications, kill old instance, launch
+cd ClipHistory && ./build.sh
+
+# Quick debug build only (no install)
+xcodebuild -project ClipHistory.xcodeproj -scheme ClipHistory -configuration Debug build
+```
+
+- `project.yml` is the source of truth for the Xcode project (xcodegen spec)
+- `Package.swift` declares SPM dependencies only; the actual Xcode project is generated from `project.yml`
+- After adding new Swift files, run `xcodegen generate` to include them in the Xcode project
+
+## Architecture
+
+Menu bar app (LSUIElement = true, no Dock icon) for macOS clipboard history.
+
+**Key patterns:**
+- All singletons use `@unchecked Sendable` to satisfy Swift 6 concurrency
+- `AppDatabase` wraps GRDB `DatabaseQueue` (SQLite), migrated via GRDB migrator
+- `ClipboardMonitor` polls `NSPasteboard.general.changeCount` every 0.5s — there is no push-based clipboard API on macOS
+- Image dedup uses SHA256 hashes; text dedup also SHA256
+- Images stored as PNG files on disk under `~/Library/Application Support/ClipHistory/Images/`; DB stores only filenames
+
+**Data flow:** `ClipboardMonitor` → `ClipboardItemDAO.upsertByHash` → DB → `ClipboardViewModel.loadItems` → SwiftUI views
+
+**Critical anti-feedback-loop logic:** When copying back to clipboard, `ClipboardMonitor.markOwnWrite()` must be called AFTER the write, not before. Recording the `changeCount` before the write causes the monitor to capture its own writes.
+
+**Image conversion:** Use `NSImage.tiffRepresentation` → `NSBitmapImageRep(data:)` for saving NSImage to PNG. Using `cgImage` directly loses color data for many NSImage types.
+
+**Settings:** `SettingsWindowController` creates an NSWindow manually (not SwiftUI `Settings` scene) because the `Settings` scene doesn't properly register in a menu-bar-only (no WindowGroup) app.
+
+**Menu bar click handling:** `StatusBarController` uses `button.sendAction(on: [.leftMouseUp, .rightMouseUp])` — left click toggles popover, right click shows context menu with Quit.
+
+**Dependencies:** GRDB.swift (~6.29) for SQLite, KeyboardShortcuts (~2.0) for global hotkey.
+
+## Common Pitfalls
+
+- **Variable name shadowing:** Don't name a local variable the same as a method (e.g., `let pngData = pngData(from: image)` shadows the method, making the second call fail with "cannot call value of non-function type 'Data'").
+- **GRDB insert is non-mutating:** `PersistableRecord.insert` returns the inserted copy with `id` set; the original struct is unchanged. Discarding the return value loses the auto-incremented id. Use `let inserted = try item.insert(db)` when the id is needed.
+- **cgImage color loss:** Converting NSImage to PNG via `cgImage` produces transparent images for many NSImage types. Always use `tiffRepresentation` → `NSBitmapImageRep`.
