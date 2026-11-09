@@ -53,6 +53,7 @@ Menu bar app (LSUIElement = true, no Dock icon) for macOS clipboard history.
 - `Preferences` owns the retention key and default; do not read the `retentionDays` key directly
 - `AppDatabase` and `ImageStore` keep the data directory at 0700 and database/image files at 0600
 - `HistoryLimits` caps history at 500 items and skips text over 2 MB; capture trims the oldest unpinned items and search also matches `sourceAppBundleId`
+- `Preferences.isCapturePaused` pauses capture; `HistoryMaintenance.clearAll()` deletes rows/images and posts `.clipboardHistoryDidChange`
 
 **Data flow:** `ClipboardMonitor` → `ClipboardItemDAO.touch(hash:)` / `insert` → DB → `ClipboardViewModel.loadItems` (background task) → SwiftUI views
 
@@ -62,7 +63,7 @@ Menu bar app (LSUIElement = true, no Dock icon) for macOS clipboard history.
 
 **Settings:** `SettingsWindowController` creates an NSWindow manually (not SwiftUI `Settings` scene) because the `Settings` scene doesn't properly register in a menu-bar-only (no WindowGroup) app.
 
-**Menu bar click handling:** `StatusBarController` uses `button.sendAction(on: [.leftMouseUp, .rightMouseUp])` — left click toggles popover, right click shows context menu with Quit.
+**Menu bar click handling:** `StatusBarController` uses `button.sendAction(on: [.leftMouseUp, .rightMouseUp])` — left click toggles popover, right click shows pause, clear-all and Quit actions.
 
 **Dependencies:** GRDB.swift (~6.29) for SQLite, KeyboardShortcuts (~2.0) for global hotkey.
 

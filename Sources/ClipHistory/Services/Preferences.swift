@@ -4,6 +4,7 @@ import Foundation
 enum Preferences {
     static let retentionDaysKey = "retentionDays"
     static let defaultRetentionDays = 3
+    static let isCapturePausedKey = "isCapturePaused"
 
     static var retentionDays: Int {
         get {
@@ -15,7 +16,15 @@ enum Preferences {
         }
     }
 
+    static var isCapturePaused: Bool {
+        get { UserDefaults.standard.bool(forKey: isCapturePausedKey) }
+        set { UserDefaults.standard.set(newValue, forKey: isCapturePausedKey) }
+    }
+
     static func registerDefaults() {
-        UserDefaults.standard.register(defaults: [retentionDaysKey: defaultRetentionDays])
+        UserDefaults.standard.register(defaults: [
+            retentionDaysKey: defaultRetentionDays,
+            isCapturePausedKey: false,
+        ])
     }
 }

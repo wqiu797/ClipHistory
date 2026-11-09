@@ -112,6 +112,14 @@ final class ClipboardItemDAO: Sendable {
 
     // MARK: - Delete
 
+    func deleteAll() throws -> [ClipboardItem] {
+        try dbQueue.write { db in
+            let items = try ClipboardItem.fetchAll(db)
+            try ClipboardItem.deleteAll(db)
+            return items
+        }
+    }
+
     func delete(id: Int64) throws -> ClipboardItem? {
         try dbQueue.write { db in
             let item = try ClipboardItem.fetchOne(db, key: id)

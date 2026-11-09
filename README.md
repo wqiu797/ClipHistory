@@ -10,6 +10,8 @@ macOS menu bar clipboard history manager. Records everything you copy — text a
 - Pin important items to the top
 - Delete unwanted items
 - Configurable retention: 1 / 3 / 5 days
+- Pause recording or clear all history from the menu bar
+- Right-click a card to copy, pin, or delete
 - Global keyboard shortcut (default: Cmd+Shift+V)
 - Auto-launch at login
 
@@ -40,7 +42,7 @@ Or open `ClipHistory.xcodeproj` in Xcode and press Cmd+R.
 - Hover over a card to reveal pin and delete buttons
 - Press Cmd+Shift+V to open the panel from anywhere
 - Navigate with ↑/↓, press Return to copy, Esc to close, or Cmd+1–9 to copy the nth item
-- Right-click the menu bar icon for the quit option
+- Right-click the menu bar icon to pause recording, clear history, or quit
 
 ## Built With
 

@@ -14,10 +14,12 @@ final class ClipboardViewModel {
     var itemCount: Int = 0
     var retentionDays: Int = 3
     var isStoragePersistent: Bool = AppDatabase.shared.isPersistent
+    var isPaused: Bool = Preferences.isCapturePaused
 
     private var searchTask: Task<Void, Never>?
     private var loadGeneration = 0
     private var defaultsObserver: NSObjectProtocol?
+    private var historyObserver: NSObjectProtocol?
 
     init() {
         retentionDays = Preferences.retentionDays
@@ -31,6 +33,17 @@ final class ClipboardViewModel {
 
         defaultsObserver = NotificationCenter.default.addObserver(
             forName: UserDefaults.didChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.isPaused = Preferences.isCapturePaused
+                self?.loadItems()
+            }
+        }
+
+        historyObserver = NotificationCenter.default.addObserver(
+            forName: .clipboardHistoryDidChange,
             object: nil,
             queue: .main
         ) { [weak self] _ in
@@ -93,6 +106,11 @@ final class ClipboardViewModel {
     }
 
     // MARK: - Actions
+
+    func togglePause() {
+        Preferences.isCapturePaused.toggle()
+        isPaused = Preferences.isCapturePaused
+    }
 
     func copyToClipboard(_ item: ClipboardItem) {
         let pasteboard = NSPasteboard.general

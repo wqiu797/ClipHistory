@@ -62,6 +62,8 @@ final class ClipboardMonitor: @unchecked Sendable {
             return
         }
 
+        guard !Preferences.isCapturePaused else { return }
+
         guard !containsSensitiveType(pasteboard) else {
             Log.clipboard.debug("Skipped a concealed/transient pasteboard item")
             return
@@ -103,6 +105,8 @@ final class ClipboardMonitor: @unchecked Sendable {
     // MARK: - Capture (background queue)
 
     private func captureText(_ text: String, sourceApp: String?) {
+        guard !Preferences.isCapturePaused else { return }
+
         let data = Data(text.utf8)
         guard data.count <= HistoryLimits.maxTextBytes else {
             Log.clipboard.notice("Skipping oversized clipboard text (\(data.count) bytes)")
@@ -134,6 +138,7 @@ final class ClipboardMonitor: @unchecked Sendable {
     }
 
     private func captureImage(_ data: Data, sourceApp: String?) {
+        guard !Preferences.isCapturePaused else { return }
         guard let encoded = imageStore.encode(data) else { return }
 
         do {

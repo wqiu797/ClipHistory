@@ -42,6 +42,17 @@ struct PopoverRootView: View {
             .frame(maxWidth: .infinity)
 
             Button {
+                viewModel.togglePause()
+            } label: {
+                Image(systemName: viewModel.isPaused ? "play.circle" : "pause.circle")
+                    .font(.system(size: 14))
+                    .foregroundColor(viewModel.isPaused ? .orange : .secondary)
+            }
+            .buttonStyle(.plain)
+            .help(viewModel.isPaused ? "Resume recording" : "Pause recording")
+            .accessibilityLabel(viewModel.isPaused ? "Resume recording" : "Pause recording")
+
+            Button {
                 SettingsWindowController.shared.show()
             } label: {
                 Image(systemName: "gearshape")
@@ -123,6 +134,12 @@ struct PopoverRootView: View {
             Text("\(viewModel.itemCount) items")
                 .font(.caption)
                 .foregroundColor(.secondary)
+
+            if viewModel.isPaused {
+                Text("Paused")
+                    .font(.caption)
+                    .foregroundColor(.orange)
+            }
 
             Spacer()
 

@@ -16,8 +16,7 @@ struct ClipboardCardView: View {
             // The whole card - including its padding - is the copy button, so short
             // text and image items stay clickable across the empty space.
             Button {
-                copyToken += 1
-                onCopy()
+                copyItem()
             } label: {
                 HStack(spacing: 10) {
                     // Pin indicator line
@@ -92,6 +91,18 @@ struct ClipboardCardView: View {
                 .allowsHitTesting(false)
         )
         .contentShape(RoundedRectangle(cornerRadius: 8))
+        .contextMenu {
+            Button("Copy") {
+                copyItem()
+            }
+            Button(item.pinnedAt != nil ? "Unpin" : "Pin to Top") {
+                onPin()
+            }
+            Divider()
+            Button("Delete", role: .destructive) {
+                onDelete()
+            }
+        }
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.15)) {
                 isHovered = hovering
@@ -107,6 +118,11 @@ struct ClipboardCardView: View {
                 showCopied = false
             }
         }
+    }
+
+    private func copyItem() {
+        copyToken += 1
+        onCopy()
     }
 
     @ViewBuilder

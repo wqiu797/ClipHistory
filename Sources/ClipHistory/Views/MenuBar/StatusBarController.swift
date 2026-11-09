@@ -7,6 +7,7 @@ final class StatusBarController: NSObject, NSApplicationDelegate {
 
     private var statusItem: NSStatusItem!
     private var popover: NSPopover!
+    private var defaultsObserver: NSObjectProtocol?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // When XCTest launches the app as its test host, leave the menu bar item,
@@ -19,14 +20,20 @@ final class StatusBarController: NSObject, NSApplicationDelegate {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
         if let button = statusItem.button {
-            button.image = NSImage(
-                systemSymbolName: "clipboard",
-                accessibilityDescription: "ClipHistory"
-            )
-            button.toolTip = "ClipHistory"
             button.target = self
             button.action = #selector(handleClick)
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
+        }
+        updateStatusItemAppearance()
+
+        defaultsObserver = NotificationCenter.default.addObserver(
+            forName: UserDefaults.didChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.updateStatusItemAppearance()
+            }
         }
 
         let contentView = PopoverRootView()
@@ -54,6 +61,25 @@ final class StatusBarController: NSObject, NSApplicationDelegate {
 
     private func showContextMenu() {
         let menu = NSMenu()
+
+        let pauseTitle = Preferences.isCapturePaused ? "Resume Recording" : "Pause Recording"
+        let pauseItem = NSMenuItem(
+            title: pauseTitle,
+            action: #selector(togglePause),
+            keyEquivalent: ""
+        )
+        pauseItem.target = self
+        menu.addItem(pauseItem)
+
+        let clearItem = NSMenuItem(
+            title: "Clear All History…",
+            action: #selector(clearAllHistory),
+            keyEquivalent: ""
+        )
+        clearItem.target = self
+        menu.addItem(clearItem)
+
+        menu.addItem(.separator())
         menu.addItem(NSMenuItem(
             title: "Quit ClipHistory",
             action: #selector(NSApplication.terminate(_:)),
@@ -62,6 +88,36 @@ final class StatusBarController: NSObject, NSApplicationDelegate {
         statusItem.menu = menu
         statusItem.button?.performClick(nil)
         statusItem.menu = nil
+    }
+
+    @objc private func togglePause() {
+        Preferences.isCapturePaused.toggle()
+        updateStatusItemAppearance()
+    }
+
+    @objc private func clearAllHistory() {
+        closePopover()
+
+        let alert = NSAlert()
+        alert.messageText = "Clear all clipboard history?"
+        alert.informativeText =
+            "This deletes every item, including pinned items and stored images. This cannot be undone."
+        alert.alertStyle = .warning
+        alert.addButton(withTitle: "Clear All")
+        alert.addButton(withTitle: "Cancel")
+
+        NSApp.activate(ignoringOtherApps: true)
+        guard alert.runModal() == .alertFirstButtonReturn else { return }
+        HistoryMaintenance.shared.clearAll()
+    }
+
+    private func updateStatusItemAppearance() {
+        let paused = Preferences.isCapturePaused
+        statusItem.button?.image = NSImage(
+            systemSymbolName: paused ? "pause.circle" : "clipboard",
+            accessibilityDescription: paused ? "ClipHistory paused" : "ClipHistory"
+        )
+        statusItem.button?.toolTip = paused ? "ClipHistory — recording paused" : "ClipHistory"
     }
 
     // MARK: - Popover

@@ -109,6 +109,26 @@ final class ClipboardItemDAOTests: XCTestCase {
 
     // MARK: - Deletion
 
+    func testDeleteAllReturnsItemsAndClearsDatabase() throws {
+        let text = try dao.insert(makeText("one", hash: "one"))
+        let image = try dao.insert(ClipboardItem(
+            contentType: .image,
+            imageFileName: "one.png",
+            thumbnailFileName: "one_thumb.png",
+            createdAt: Date(),
+            contentHash: "image-one"
+        ))
+
+        let deleted = try dao.deleteAll()
+
+        XCTAssertEqual(
+            Set(deleted.compactMap(\.id)),
+            Set([text.id, image.id].compactMap { $0 })
+        )
+        XCTAssertEqual(try dao.fetchCount(), 0)
+        XCTAssertTrue(try dao.allImageFileNames().isEmpty)
+    }
+
     func testDeleteReturnsRemovedItem() throws {
         let item = try dao.insert(makeText("gone", hash: "g"))
         let deleted = try dao.delete(id: try XCTUnwrap(item.id))
