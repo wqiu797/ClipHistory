@@ -1,7 +1,13 @@
 import Foundation
 import GRDB
 
-final class ClipboardItemDAO {
+/// Result of an insert-or-refresh operation keyed by `contentHash`.
+struct ClipboardUpsertResult: Sendable {
+    let item: ClipboardItem
+    let isNew: Bool
+}
+
+final class ClipboardItemDAO: Sendable {
     private let dbQueue: DatabaseQueue
 
     init(dbQueue: DatabaseQueue = AppDatabase.shared.dbQueue) {
@@ -10,39 +16,56 @@ final class ClipboardItemDAO {
 
     // MARK: - Insert / Update
 
-    @discardableResult
-    func upsertByHash(_ item: ClipboardItem) throws -> ClipboardItem {
+    /// Returns the stored item with the same hash, refreshing its `createdAt` so it bubbles back to
+    /// the top. Returns `nil` when the content has not been seen before.
+    func touch(hash: String, at date: Date = Date()) throws -> ClipboardItem? {
         try dbQueue.write { db in
-            if var existing = try ClipboardItem
-                .filter(ClipboardItem.Columns.contentHash == item.contentHash)
+            guard var existing = try ClipboardItem
+                .filter(ClipboardItem.Columns.contentHash == hash)
                 .fetchOne(db)
-            {
-                existing.createdAt = Date()
-                try existing.update(db)
-                return existing
-            } else {
-                var newItem = item
-                try newItem.insert(db)
-                return newItem
-            }
+            else { return nil }
+
+            existing.createdAt = date
+            try existing.update(db)
+            return existing
         }
+    }
+
+    @discardableResult
+    func insert(_ item: ClipboardItem) throws -> ClipboardItem {
+        try dbQueue.write { db in
+            var newItem = item
+            try newItem.insert(db)
+            return newItem
+        }
+    }
+
+    /// Inserts new content or refreshes the existing row for the same hash.
+    func upsertByHash(_ item: ClipboardItem) throws -> ClipboardUpsertResult {
+        if let existing = try touch(hash: item.contentHash) {
+            return ClipboardUpsertResult(item: existing, isNew: false)
+        }
+        return ClipboardUpsertResult(item: try insert(item), isNew: true)
     }
 
     // MARK: - Fetch
 
-    func fetchAll(searchText: String? = nil) throws -> [ClipboardItem] {
+    func fetchAll(searchText: String? = nil, limit: Int? = nil) throws -> [ClipboardItem] {
         try dbQueue.read { db in
-            var query = ClipboardItem
-                .order(
-                    ClipboardItem.Columns.pinnedAt == nil,
-                    ClipboardItem.Columns.pinnedAt.desc,
-                    ClipboardItem.Columns.createdAt.desc
-                )
+            var query = ClipboardItem.order(
+                ClipboardItem.Columns.pinnedAt == nil,
+                ClipboardItem.Columns.pinnedAt.desc,
+                ClipboardItem.Columns.createdAt.desc
+            )
 
             if let text = searchText, !text.isEmpty {
                 query = query.filter(
                     ClipboardItem.Columns.textContent.like("%\(text)%")
                 )
+            }
+
+            if let limit {
+                query = query.limit(limit)
             }
 
             return try query.fetchAll(db)
@@ -52,6 +75,16 @@ final class ClipboardItemDAO {
     func fetchCount() throws -> Int {
         try dbQueue.read { db in
             try ClipboardItem.fetchCount(db)
+        }
+    }
+
+    /// File names of every image and thumbnail still referenced by the database.
+    func allImageFileNames() throws -> [String] {
+        try dbQueue.read { db in
+            try ClipboardItem
+                .filter(ClipboardItem.Columns.contentType == ContentType.image)
+                .fetchAll(db)
+                .flatMap { [$0.imageFileName, $0.thumbnailFileName].compactMap { $0 } }
         }
     }
 

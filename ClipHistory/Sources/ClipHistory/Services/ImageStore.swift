@@ -1,5 +1,14 @@
 import AppKit
+import CryptoKit
 import Foundation
+import ImageIO
+
+/// A clipboard image that has been decoded and normalised to PNG, but not written to disk yet.
+struct EncodedImage: Sendable {
+    let pngData: Data
+    let thumbnailPNGData: Data
+    let contentHash: String
+}
 
 final class ImageStore: @unchecked Sendable {
     static let shared = ImageStore()
@@ -19,44 +28,59 @@ final class ImageStore: @unchecked Sendable {
         thumbCache.countLimit = 200
     }
 
-    // MARK: - Save
+    // MARK: - Encode
 
-    func saveImage(_ tiffData: Data) -> (imageName: String, thumbName: String)? {
-        guard let image = NSImage(data: tiffData) else { return nil }
+    /// Normalises arbitrary clipboard image data (PNG/TIFF/…) into a full-size PNG, a thumbnail and
+    /// a stable hash. Hashing the canonical PNG keeps deduplication reliable across the different
+    /// TIFF representations apps put on the pasteboard.
+    func encode(_ imageData: Data) -> EncodedImage? {
+        guard let image = NSImage(data: imageData),
+              let fullPNG = pngData(from: image)
+        else {
+            Log.images.error("Could not decode clipboard image")
+            return nil
+        }
 
-        let uuid = UUID().uuidString
-        let imageName = "\(uuid).png"
-        let thumbName = "\(uuid)_thumb.png"
+        let thumbnailPNG = downsampledPNG(from: fullPNG, maxPixelSize: 400) ?? fullPNG
+        let hash = SHA256.hash(data: fullPNG)
+            .map { String(format: "%02x", $0) }
+            .joined()
 
-        // Save full image as PNG
-        guard let fullImageData = pngData(from: image) else { return nil }
+        return EncodedImage(
+            pngData: fullPNG,
+            thumbnailPNGData: thumbnailPNG,
+            contentHash: hash
+        )
+    }
+
+    // MARK: - Write
+
+    /// Persists an encoded image. Rolls back partial writes so a failure never leaves half an image
+    /// on disk.
+    func write(_ encoded: EncodedImage) -> (imageName: String, thumbnailName: String)? {
+        let identifier = UUID().uuidString
+        let imageName = "\(identifier).png"
+        let thumbnailName = "\(identifier)_thumb.png"
         let imageURL = imagesDir.appendingPathComponent(imageName)
+        let thumbnailURL = imagesDir.appendingPathComponent(thumbnailName)
+
         do {
-            try fullImageData.write(to: imageURL)
+            try encoded.pngData.write(to: imageURL, options: .atomic)
+            try encoded.thumbnailPNGData.write(to: thumbnailURL, options: .atomic)
         } catch {
-            print("Failed to save image: \(error)")
+            Log.images.error("Could not write image files: \(String(describing: error), privacy: .public)")
+            try? FileManager.default.removeItem(at: imageURL)
+            try? FileManager.default.removeItem(at: thumbnailURL)
             return nil
         }
 
-        // Save thumbnail
-        let thumb = resizeImage(image, maxSize: NSSize(width: 200, height: 200))
-        guard let thumbPNG = pngData(from: thumb) else { return nil }
-        let thumbURL = imagesDir.appendingPathComponent(thumbName)
-        do {
-            try thumbPNG.write(to: thumbURL)
-        } catch {
-            print("Failed to save thumbnail: \(error)")
-            return nil
-        }
-
-        return (imageName, thumbName)
+        return (imageName, thumbnailName)
     }
 
     // MARK: - Load
 
     func loadImage(fileName: String) -> NSImage? {
-        let url = imagesDir.appendingPathComponent(fileName)
-        return NSImage(contentsOf: url)
+        NSImage(contentsOf: imagesDir.appendingPathComponent(fileName))
     }
 
     func loadThumbnail(fileName: String) -> NSImage? {
@@ -81,12 +105,29 @@ final class ImageStore: @unchecked Sendable {
         }
     }
 
-    func cleanupOrphanedFiles(activeFiles: Set<String>) {
-        guard let files = try? FileManager.default.contentsOfDirectory(atPath: imagesDir.path) else { return }
-        for file in files {
-            if !activeFiles.contains(file) {
-                try? FileManager.default.removeItem(at: imagesDir.appendingPathComponent(file))
+    /// Deletes image files that no database row references. Files younger than `minimumAge` are kept
+    /// so a capture that is still being saved is never swept away.
+    func cleanupOrphanedFiles(activeFiles: Set<String>, minimumAge: TimeInterval = 60 * 60) {
+        guard let urls = try? FileManager.default.contentsOfDirectory(
+            at: imagesDir,
+            includingPropertiesForKeys: [.contentModificationDateKey],
+            options: [.skipsHiddenFiles]
+        ) else { return }
+
+        let cutoff = Date().addingTimeInterval(-minimumAge)
+        var removed = 0
+
+        for url in urls where !activeFiles.contains(url.lastPathComponent) {
+            let modified = (try? url.resourceValues(forKeys: [.contentModificationDateKey]))?
+                .contentModificationDate ?? .distantPast
+            guard modified < cutoff else { continue }
+            if (try? FileManager.default.removeItem(at: url)) != nil {
+                removed += 1
             }
+        }
+
+        if removed > 0 {
+            Log.images.notice("Removed \(removed) orphaned image files")
         }
     }
 
@@ -99,29 +140,20 @@ final class ImageStore: @unchecked Sendable {
         return rep.representation(using: .png, properties: [:])
     }
 
-    private func resizeImage(_ image: NSImage, maxSize: NSSize) -> NSImage {
-        let originalSize = image.size
-        guard originalSize.width > maxSize.width || originalSize.height > maxSize.height
-        else { return image }
+    /// Downscales through ImageIO so it can run off the main thread without touching `lockFocus`.
+    private func downsampledPNG(from data: Data, maxPixelSize: Int) -> Data? {
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil) else { return nil }
 
-        let ratio = min(
-            maxSize.width / originalSize.width,
-            maxSize.height / originalSize.height
-        )
-        let newSize = NSSize(
-            width: originalSize.width * ratio,
-            height: originalSize.height * ratio
-        )
+        let options: [CFString: Any] = [
+            kCGImageSourceCreateThumbnailFromImageAlways: true,
+            kCGImageSourceCreateThumbnailWithTransform: true,
+            kCGImageSourceShouldCacheImmediately: true,
+            kCGImageSourceThumbnailMaxPixelSize: maxPixelSize,
+        ]
 
-        let resized = NSImage(size: newSize)
-        resized.lockFocus()
-        image.draw(
-            in: NSRect(origin: .zero, size: newSize),
-            from: NSRect(origin: .zero, size: originalSize),
-            operation: .copy,
-            fraction: 1.0
-        )
-        resized.unlockFocus()
-        return resized
+        guard let cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) else {
+            return nil
+        }
+        return NSBitmapImageRep(cgImage: cgImage).representation(using: .png, properties: [:])
     }
 }

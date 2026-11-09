@@ -30,6 +30,7 @@ final class StatusBarController: NSObject, NSApplicationDelegate {
 
         ClipboardMonitor.shared.start()
         CleanupScheduler.shared.start()
+        sweepOrphanedImages()
     }
 
     @objc private func handleClick() {
@@ -69,5 +70,22 @@ final class StatusBarController: NSObject, NSApplicationDelegate {
         guard let button = statusItem.button, !popover.isShown else { return }
         popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
         popover.contentViewController?.view.window?.makeKey()
+    }
+
+    // MARK: - Storage maintenance
+
+    /// Removes image files that no longer belong to a database row (e.g. left behind by a crash).
+    private func sweepOrphanedImages() {
+        DispatchQueue.global(qos: .utility).async {
+            do {
+                let dao = ClipboardItemDAO()
+                let activeFiles = try dao.allImageFileNames()
+                ImageStore.shared.cleanupOrphanedFiles(activeFiles: Set(activeFiles))
+            } catch {
+                Log.images.error(
+                    "Could not sweep orphaned images: \(String(describing: error), privacy: .public)"
+                )
+            }
+        }
     }
 }
