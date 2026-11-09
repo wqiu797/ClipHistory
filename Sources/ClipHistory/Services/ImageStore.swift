@@ -17,23 +17,38 @@ final class ImageStore: @unchecked Sendable {
     private let thumbCache = NSCache<NSString, NSImage>()
 
     private init() {
+        imagesDir = Self.defaultImagesDirectory()
+        Self.prepare(imagesDir)
+        thumbCache.countLimit = 200
+    }
+
+    /// Injection point for tests; production uses `shared`.
+    init(directory: URL) {
+        imagesDir = directory
+        Self.prepare(directory)
+        thumbCache.countLimit = 200
+    }
+
+    private static func defaultImagesDirectory() -> URL {
         let appSupport = FileManager.default.urls(
             for: .applicationSupportDirectory,
             in: .userDomainMask
         ).first!
-        imagesDir = appSupport
+        return appSupport
             .appendingPathComponent("ClipHistory")
             .appendingPathComponent("Images")
+    }
+
+    private static func prepare(_ directory: URL) {
         try? FileManager.default.createDirectory(
-            at: imagesDir,
+            at: directory,
             withIntermediateDirectories: true,
             attributes: [.posixPermissions: 0o700]
         )
         try? FileManager.default.setAttributes(
             [.posixPermissions: 0o700],
-            ofItemAtPath: imagesDir.path
+            ofItemAtPath: directory.path
         )
-        thumbCache.countLimit = 200
     }
 
     // MARK: - Encode

@@ -39,7 +39,8 @@ final class CleanupScheduler: @unchecked Sendable {
         DispatchQueue.global(qos: .utility).async {
             do {
                 let expired = try dao.deleteExpired(before: cutoff)
-                for item in expired where item.contentType == .image {
+                let trimmed = try dao.trim(maxItems: HistoryLimits.maxItems)
+                for item in expired + trimmed where item.contentType == .image {
                     imageStore.deleteImages(
                         imageName: item.imageFileName,
                         thumbName: item.thumbnailFileName
@@ -47,6 +48,9 @@ final class CleanupScheduler: @unchecked Sendable {
                 }
                 if !expired.isEmpty {
                     Log.cleanup.notice("Removed \(expired.count) expired clipboard items")
+                }
+                if !trimmed.isEmpty {
+                    Log.cleanup.notice("Trimmed \(trimmed.count) items over the history limit")
                 }
             } catch {
                 Log.cleanup.error("Cleanup failed: \(String(describing: error), privacy: .public)")

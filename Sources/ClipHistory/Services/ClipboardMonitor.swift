@@ -103,10 +103,17 @@ final class ClipboardMonitor: @unchecked Sendable {
     // MARK: - Capture (background queue)
 
     private func captureText(_ text: String, sourceApp: String?) {
-        let hash = Self.sha256Hex(Data(text.utf8))
+        let data = Data(text.utf8)
+        guard data.count <= HistoryLimits.maxTextBytes else {
+            Log.clipboard.notice("Skipping oversized clipboard text (\(data.count) bytes)")
+            return
+        }
+
+        let hash = Self.sha256Hex(data)
 
         do {
             if let existing = try dao.touch(hash: hash) {
+                trimHistory()
                 notify(existing)
                 return
             }
@@ -118,7 +125,9 @@ final class ClipboardMonitor: @unchecked Sendable {
                 createdAt: Date(),
                 contentHash: hash
             )
-            notify(try dao.insert(item))
+            let saved = try dao.insert(item)
+            trimHistory()
+            notify(saved)
         } catch {
             Log.clipboard.error("Failed to save text clipboard: \(String(describing: error), privacy: .public)")
         }
@@ -130,6 +139,7 @@ final class ClipboardMonitor: @unchecked Sendable {
         do {
             // Deduplicate *before* writing files so repeated copies never leak orphans.
             if let existing = try dao.touch(hash: encoded.contentHash) {
+                trimHistory()
                 notify(existing)
                 return
             }
@@ -146,7 +156,9 @@ final class ClipboardMonitor: @unchecked Sendable {
             )
 
             do {
-                notify(try dao.insert(item))
+                let saved = try dao.insert(item)
+                trimHistory()
+                notify(saved)
             } catch {
                 // Never leave files behind if the row could not be inserted.
                 imageStore.deleteImages(imageName: files.imageName, thumbName: files.thumbnailName)
@@ -154,6 +166,26 @@ final class ClipboardMonitor: @unchecked Sendable {
             }
         } catch {
             Log.clipboard.error("Failed to save image clipboard: \(String(describing: error), privacy: .public)")
+        }
+    }
+
+    /// Keeps the database bounded and removes image files belonging to trimmed rows.
+    private func trimHistory() {
+        do {
+            let removed = try dao.trim(maxItems: HistoryLimits.maxItems)
+            for item in removed where item.contentType == .image {
+                imageStore.deleteImages(
+                    imageName: item.imageFileName,
+                    thumbName: item.thumbnailFileName
+                )
+            }
+            if !removed.isEmpty {
+                Log.clipboard.notice("Trimmed \(removed.count) old clipboard items")
+            }
+        } catch {
+            Log.database.error(
+                "Failed to trim history: \(String(describing: error), privacy: .public)"
+            )
         }
     }
 

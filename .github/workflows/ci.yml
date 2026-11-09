@@ -24,3 +24,13 @@ jobs:
 
       - name: Build and test
         run: ./test.sh
+
+      - name: Build Release
+        run: |
+          xcodebuild \
+            -project ClipHistory.xcodeproj \
+            -scheme ClipHistory \
+            -configuration Release \
+            -derivedDataPath "$RUNNER_TEMP/cliphistory-release" \
+            -destination 'platform=macOS' \
+            build

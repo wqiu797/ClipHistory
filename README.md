@@ -6,7 +6,7 @@ macOS menu bar clipboard history manager. Records everything you copy — text a
 
 - Records copied text and images automatically
 - Image thumbnails in history cards
-- Search by keyword
+- Search text and source app names
 - Pin important items to the top
 - Delete unwanted items
 - Configurable retention: 1 / 3 / 5 days

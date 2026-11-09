@@ -52,6 +52,7 @@ Menu bar app (LSUIElement = true, no Dock icon) for macOS clipboard history.
 - Images stored as PNG files on disk under `~/Library/Application Support/ClipHistory/Images/`; DB stores only filenames. Orphaned files are swept at launch
 - `Preferences` owns the retention key and default; do not read the `retentionDays` key directly
 - `AppDatabase` and `ImageStore` keep the data directory at 0700 and database/image files at 0600
+- `HistoryLimits` caps history at 500 items and skips text over 2 MB; capture trims the oldest unpinned items and search also matches `sourceAppBundleId`
 
 **Data flow:** `ClipboardMonitor` → `ClipboardItemDAO.touch(hash:)` / `insert` → DB → `ClipboardViewModel.loadItems` (background task) → SwiftUI views
 

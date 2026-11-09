@@ -52,7 +52,10 @@ final class ClipboardViewModel {
 
         Task.detached(priority: .userInitiated) { [self] in
             do {
-                let items = try dao.fetchAll(searchText: query.isEmpty ? nil : query)
+                let items = try dao.fetchAll(
+                    searchText: query.isEmpty ? nil : query,
+                    limit: HistoryLimits.maxItems
+                )
                 let count = try dao.fetchCount()
 
                 await MainActor.run {

@@ -48,8 +48,8 @@ final class ClipboardItemDAO: Sendable {
                 // Escape LIKE wildcards so a search for "50%" or "a_b" behaves literally.
                 let pattern = "%\(Self.escapeForLike(text))%"
                 query = query.filter(
-                    sql: "textContent LIKE ? ESCAPE '\\'",
-                    arguments: [pattern]
+                    sql: "(textContent LIKE ? ESCAPE '\\' OR sourceAppBundleId LIKE ? ESCAPE '\\')",
+                    arguments: [pattern, pattern]
                 )
             }
 
@@ -74,6 +74,28 @@ final class ClipboardItemDAO: Sendable {
                 .filter(ClipboardItem.Columns.contentType == ContentType.image)
                 .fetchAll(db)
                 .flatMap { [$0.imageFileName, $0.thumbnailFileName].compactMap { $0 } }
+        }
+    }
+
+    /// Deletes the oldest unpinned items until the history fits within `maxItems`.
+    /// Pinned items are never trimmed.
+    func trim(maxItems: Int) throws -> [ClipboardItem] {
+        try dbQueue.write { db in
+            let total = try ClipboardItem.fetchCount(db)
+            guard total > maxItems else { return [] }
+
+            let excess = total - maxItems
+            let expired = try ClipboardItem
+                .filter(ClipboardItem.Columns.pinnedAt == nil)
+                .order(ClipboardItem.Columns.createdAt.asc)
+                .limit(excess)
+                .fetchAll(db)
+
+            let ids = expired.compactMap(\.id)
+            guard !ids.isEmpty else { return [] }
+
+            try ClipboardItem.filter(keys: ids).deleteAll(db)
+            return expired
         }
     }
 

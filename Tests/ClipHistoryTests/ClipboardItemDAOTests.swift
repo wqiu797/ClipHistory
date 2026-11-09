@@ -136,6 +136,45 @@ final class ClipboardItemDAOTests: XCTestCase {
         XCTAssertEqual(remaining, Set([pinned.id, recent.id].compactMap { $0 }))
     }
 
+    func testSearchMatchesSourceAppAndImageItems() throws {
+        try dao.insert(makeText("browser tab", hash: "safari", sourceApp: "com.apple.Safari"))
+        try dao.insert(makeText("other", hash: "other", sourceApp: "com.example.Other"))
+        try dao.insert(ClipboardItem(
+            contentType: .image,
+            imageFileName: "preview.png",
+            thumbnailFileName: "preview_thumb.png",
+            sourceAppBundleId: "com.apple.Preview",
+            createdAt: Date(),
+            contentHash: "preview"
+        ))
+
+        XCTAssertEqual(
+            try dao.fetchAll(searchText: "safari").compactMap(\.textContent),
+            ["browser tab"]
+        )
+        XCTAssertEqual(
+            try dao.fetchAll(searchText: "preview").compactMap(\.contentType),
+            [.image]
+        )
+    }
+
+    func testTrimKeepsNewestUnpinnedItems() throws {
+        let base = Date(timeIntervalSince1970: 1_700_000_000)
+        _ = try dao.insert(makeText("pinned", hash: "pinned", createdAt: base, pinnedAt: base))
+        _ = try dao.insert(makeText("old", hash: "old", createdAt: base.addingTimeInterval(1)))
+        _ = try dao.insert(makeText("older", hash: "older", createdAt: base.addingTimeInterval(2)))
+        _ = try dao.insert(makeText("oldest-kept", hash: "oldest-kept", createdAt: base.addingTimeInterval(3)))
+        _ = try dao.insert(makeText("newest", hash: "newest", createdAt: base.addingTimeInterval(4)))
+
+        let removed = try dao.trim(maxItems: 3)
+
+        XCTAssertEqual(Set(removed.compactMap(\.textContent)), ["old", "older"])
+        XCTAssertEqual(
+            Set(try dao.fetchAll().compactMap(\.textContent)),
+            ["pinned", "oldest-kept", "newest"]
+        )
+    }
+
     // MARK: - Images
 
     func testAllImageFileNamesReturnsReferencedFiles() throws {
@@ -160,12 +199,13 @@ final class ClipboardItemDAOTests: XCTestCase {
         _ text: String,
         hash: String? = nil,
         createdAt: Date = Date(),
-        pinnedAt: Date? = nil
+        pinnedAt: Date? = nil,
+        sourceApp: String = "com.example.tests"
     ) -> ClipboardItem {
         ClipboardItem(
             contentType: .text,
             textContent: text,
-            sourceAppBundleId: "com.example.tests",
+            sourceAppBundleId: sourceApp,
             pinnedAt: pinnedAt,
             createdAt: createdAt,
             contentHash: hash ?? "hash-\(UUID().uuidString)"
