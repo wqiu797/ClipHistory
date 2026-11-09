@@ -26,6 +26,9 @@ if [ -z "$XCODEBUILD" ] || [ ! -x "$XCODEBUILD" ]; then
 fi
 
 mkdir -p "$DERIVED_DATA"
+# Keep Spotlight from indexing build products, which would otherwise show up as
+# duplicate ClipHistory apps alongside the installed copy.
+touch "$DERIVED_DATA/.metadata_never_index"
 
 echo "Building ClipHistory ($CONFIGURATION)..."
 if ! "$XCODEBUILD" \
