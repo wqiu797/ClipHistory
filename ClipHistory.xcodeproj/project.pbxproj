@@ -19,6 +19,7 @@
 		4570D77A5933E01A96265894 /* ClipboardItemDAO.swift in Sources */ = {isa = PBXBuildFile; fileRef = B42BB5B42D292924CACFD2C1 /* ClipboardItemDAO.swift */; };
 		45EE5FCB9A6943711A4E54FA /* CleanupScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53CE0208FDA4E9443B9E7F9E /* CleanupScheduler.swift */; };
 		463E7756BB62D01F23D6CEBE /* ContentType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539C100C3454F066418E1895 /* ContentType.swift */; };
+		61CD07E16E3BC9F93A414213 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02F32ACF7A202732EA77BC6 /* Preferences.swift */; };
 		694324585887FD31C0797AF9 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 93CBB2F21F299A63ADE80B06 /* KeyboardShortcuts */; };
 		79B708C18B2F92F851DE8CBD /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 842E478D5BA6F6E63B55BEB0 /* GRDB */; };
 		7AA2E2FAAAEED2096B4EAEA6 /* TextCardContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B8AB97FE3B6B7D40399B76 /* TextCardContent.swift */; };
@@ -75,6 +76,7 @@
 		B49016BC15F9220E1696FBF5 /* GeneralSettingsTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsTab.swift; sourceTree = "<group>"; };
 		B5953FFDF53B272F4EF9E9A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		BC377AC3B00EF0625EDFF4F3 /* KeyEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyEventHandler.swift; sourceTree = "<group>"; };
+		C02F32ACF7A202732EA77BC6 /* Preferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		C0B8AB97FE3B6B7D40399B76 /* TextCardContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextCardContent.swift; sourceTree = "<group>"; };
 		C1E1AE5F359FF39E7F8A2CAA /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		E6DA1D253F0D83674C448770 /* ClipboardCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardCardView.swift; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 				FDB56A4E50A3AF4C8A930F31 /* ClipboardMonitor.swift */,
 				818C3F7F2D469D85B268A023 /* ImageStore.swift */,
 				E9BD64F654B98BCA3D09FB36 /* Log.swift */,
+				C02F32ACF7A202732EA77BC6 /* Preferences.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -370,6 +373,7 @@
 				FAE8C4A338766A3723C8670F /* KeyEventHandler.swift in Sources */,
 				E6DCB9930817575B8F58B1F2 /* Log.swift in Sources */,
 				29C3753D21D02E153C564B76 /* PopoverRootView.swift in Sources */,
+				61CD07E16E3BC9F93A414213 /* Preferences.swift in Sources */,
 				9F3B10218C848488AD9C558A /* RelativeTimeText.swift in Sources */,
 				076DF9678AD2CDC6713BDCB6 /* SearchBar.swift in Sources */,
 				F85472F28DD3A344FD3536F6 /* SettingsView.swift in Sources */,
@@ -408,6 +412,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Sources/ClipHistory/Resources/Info.plist;
@@ -417,11 +422,9 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cliphistory.app;
 				SDKROOT = macosx;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
-					"$(inherited)",
-				);
 			};
 			name = Release;
 		};
@@ -507,6 +510,7 @@
 				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Sources/ClipHistory/Resources/Info.plist;
@@ -516,11 +520,9 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.cliphistory.app;
 				SDKROOT = macosx;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
-					"$(inherited)",
-				);
 			};
 			name = Debug;
 		};

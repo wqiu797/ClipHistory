@@ -53,16 +53,6 @@ final class ClipboardItemDAOTests: XCTestCase {
         XCTAssertEqual(try dao.fetchCount(), 1)
     }
 
-    func testUpsertByHashReportsNewThenExisting() throws {
-        let first = try dao.upsertByHash(makeText("hello", hash: "h"))
-        XCTAssertTrue(first.isNew)
-
-        let second = try dao.upsertByHash(makeText("hello", hash: "h"))
-        XCTAssertFalse(second.isNew)
-        XCTAssertEqual(first.item.id, second.item.id)
-        XCTAssertEqual(try dao.fetchCount(), 1)
-    }
-
     // MARK: - Search
 
     func testSearchEscapesLikeWildcards() throws {

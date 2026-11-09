@@ -7,7 +7,7 @@ import ServiceManagement
 final class SettingsViewModel {
     var retentionDays: Int {
         didSet {
-            UserDefaults.standard.set(retentionDays, forKey: "retentionDays")
+            Preferences.retentionDays = retentionDays
             CleanupScheduler.shared.performCleanup()
         }
     }
@@ -28,8 +28,7 @@ final class SettingsViewModel {
     }
 
     init() {
-        let days = UserDefaults.standard.integer(forKey: "retentionDays")
-        retentionDays = days > 0 ? days : 3
+        retentionDays = Preferences.retentionDays
         launchAtLogin = SMAppService.mainApp.status == .enabled
     }
 }

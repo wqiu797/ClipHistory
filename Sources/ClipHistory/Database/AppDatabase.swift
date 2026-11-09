@@ -19,16 +19,37 @@ final class AppDatabase: Sendable {
 
         let dbDirectory = appSupport.appendingPathComponent("ClipHistory", isDirectory: true)
         do {
-            try FileManager.default.createDirectory(at: dbDirectory, withIntermediateDirectories: true)
+            try FileManager.default.createDirectory(
+                at: dbDirectory,
+                withIntermediateDirectories: true,
+                attributes: [.posixPermissions: 0o700]
+            )
         } catch {
             Log.database.fault(
                 "Could not create Application Support directory: \(String(describing: error), privacy: .public)"
             )
         }
-
-        dbQueue = Self.openRecovering(
-            at: dbDirectory.appendingPathComponent("cliphistory.sqlite")
+        try? FileManager.default.setAttributes(
+            [.posixPermissions: 0o700],
+            ofItemAtPath: dbDirectory.path
         )
+
+        let dbURL = dbDirectory.appendingPathComponent("cliphistory.sqlite")
+        dbQueue = Self.openRecovering(at: dbURL)
+        Self.restrictDatabasePermissions(at: dbURL)
+    }
+
+    /// Clipboard history is sensitive: keep the database and its WAL files readable only by the
+    /// current user. The enclosing directory is also 0700, so future WAL files stay protected.
+    private static func restrictDatabasePermissions(at url: URL) {
+        for suffix in ["", "-wal", "-shm"] {
+            let path = url.path + suffix
+            guard FileManager.default.fileExists(atPath: path) else { continue }
+            try? FileManager.default.setAttributes(
+                [.posixPermissions: 0o600],
+                ofItemAtPath: path
+            )
+        }
     }
 
     // MARK: - Opening

@@ -50,6 +50,8 @@ Menu bar app (LSUIElement = true, no Dock icon) for macOS clipboard history.
 - Image dedup uses SHA256 over the normalised PNG; text dedup also SHA256. Hash the PNG, not the raw TIFF, so the same image from different apps still dedupes
 - Images are written only after `dao.touch(hash:)` reports a miss — never write files before deduplicating, and never leave files behind if the DB insert fails
 - Images stored as PNG files on disk under `~/Library/Application Support/ClipHistory/Images/`; DB stores only filenames. Orphaned files are swept at launch
+- `Preferences` owns the retention key and default; do not read the `retentionDays` key directly
+- `AppDatabase` and `ImageStore` keep the data directory at 0700 and database/image files at 0600
 
 **Data flow:** `ClipboardMonitor` → `ClipboardItemDAO.touch(hash:)` / `insert` → DB → `ClipboardViewModel.loadItems` (background task) → SwiftUI views
 

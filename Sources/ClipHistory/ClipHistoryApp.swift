@@ -6,10 +6,7 @@ struct ClipHistoryApp: App {
     @NSApplicationDelegateAdaptor(StatusBarController.self) var appDelegate
 
     init() {
-        // Set default retention days
-        if UserDefaults.standard.integer(forKey: "retentionDays") == 0 {
-            UserDefaults.standard.set(3, forKey: "retentionDays")
-        }
+        Preferences.registerDefaults()
 
         // Global keyboard shortcut
         KeyboardShortcuts.onKeyDown(for: .showClipHistory) {

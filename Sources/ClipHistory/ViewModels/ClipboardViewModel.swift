@@ -19,7 +19,7 @@ final class ClipboardViewModel {
     private var defaultsObserver: NSObjectProtocol?
 
     init() {
-        retentionDays = Self.currentRetentionDays()
+        retentionDays = Preferences.retentionDays
         loadItems()
 
         monitor.onNewItem = { [weak self] _ in
@@ -59,7 +59,7 @@ final class ClipboardViewModel {
                     guard loadGeneration == generation else { return }
                     self.items = items
                     self.itemCount = count
-                    self.retentionDays = Self.currentRetentionDays()
+                    self.retentionDays = Preferences.retentionDays
                 }
             } catch {
                 Log.database.error(
@@ -100,10 +100,13 @@ final class ClipboardViewModel {
                 pasteboard.setString(text, forType: .string)
             }
         case .image:
-            if let fileName = item.imageFileName,
-               let image = imageStore.loadImage(fileName: fileName)
-            {
-                pasteboard.writeObjects([image])
+            if let fileName = item.imageFileName {
+                if let pngData = imageStore.loadPNGData(fileName: fileName) {
+                    pasteboard.setData(pngData, forType: .png)
+                } else if let image = imageStore.loadImage(fileName: fileName) {
+                    // Fallback for a missing/corrupt file that still decodes as an image.
+                    pasteboard.writeObjects([image])
+                }
             }
         }
 
@@ -151,12 +154,5 @@ final class ClipboardViewModel {
                 self.loadItems()
             }
         }
-    }
-
-    // MARK: - Preferences
-
-    static func currentRetentionDays() -> Int {
-        let days = UserDefaults.standard.integer(forKey: "retentionDays")
-        return days > 0 ? days : 3
     }
 }

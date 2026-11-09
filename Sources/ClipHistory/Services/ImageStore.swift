@@ -24,7 +24,15 @@ final class ImageStore: @unchecked Sendable {
         imagesDir = appSupport
             .appendingPathComponent("ClipHistory")
             .appendingPathComponent("Images")
-        try? FileManager.default.createDirectory(at: imagesDir, withIntermediateDirectories: true)
+        try? FileManager.default.createDirectory(
+            at: imagesDir,
+            withIntermediateDirectories: true,
+            attributes: [.posixPermissions: 0o700]
+        )
+        try? FileManager.default.setAttributes(
+            [.posixPermissions: 0o700],
+            ofItemAtPath: imagesDir.path
+        )
         thumbCache.countLimit = 200
     }
 
@@ -67,6 +75,8 @@ final class ImageStore: @unchecked Sendable {
         do {
             try encoded.pngData.write(to: imageURL, options: .atomic)
             try encoded.thumbnailPNGData.write(to: thumbnailURL, options: .atomic)
+            Self.restrictPermissions(of: imageURL)
+            Self.restrictPermissions(of: thumbnailURL)
         } catch {
             Log.images.error("Could not write image files: \(String(describing: error), privacy: .public)")
             try? FileManager.default.removeItem(at: imageURL)
@@ -78,6 +88,10 @@ final class ImageStore: @unchecked Sendable {
     }
 
     // MARK: - Load
+
+    func loadPNGData(fileName: String) -> Data? {
+        try? Data(contentsOf: imagesDir.appendingPathComponent(fileName))
+    }
 
     func loadImage(fileName: String) -> NSImage? {
         NSImage(contentsOf: imagesDir.appendingPathComponent(fileName))
@@ -129,6 +143,15 @@ final class ImageStore: @unchecked Sendable {
         if removed > 0 {
             Log.images.notice("Removed \(removed) orphaned image files")
         }
+    }
+
+    // MARK: - Permissions
+
+    private static func restrictPermissions(of url: URL) {
+        try? FileManager.default.setAttributes(
+            [.posixPermissions: 0o600],
+            ofItemAtPath: url.path
+        )
     }
 
     // MARK: - Helpers

@@ -24,8 +24,7 @@ final class CleanupScheduler: @unchecked Sendable {
     }
 
     func performCleanup() {
-        let retentionDays = UserDefaults.standard.integer(forKey: "retentionDays")
-        let days = retentionDays > 0 ? retentionDays : 3
+        let days = Preferences.retentionDays
 
         guard let cutoff = Calendar.current.date(
             byAdding: .day,

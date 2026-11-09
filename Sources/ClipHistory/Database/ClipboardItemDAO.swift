@@ -1,12 +1,6 @@
 import Foundation
 import GRDB
 
-/// Result of an insert-or-refresh operation keyed by `contentHash`.
-struct ClipboardUpsertResult: Sendable {
-    let item: ClipboardItem
-    let isNew: Bool
-}
-
 final class ClipboardItemDAO: Sendable {
     private let dbQueue: DatabaseQueue
 
@@ -38,14 +32,6 @@ final class ClipboardItemDAO: Sendable {
             // `PersistableRecord.insert` returns Void and leaves the value untouched.
             try item.inserted(db)
         }
-    }
-
-    /// Inserts new content or refreshes the existing row for the same hash.
-    func upsertByHash(_ item: ClipboardItem) throws -> ClipboardUpsertResult {
-        if let existing = try touch(hash: item.contentHash) {
-            return ClipboardUpsertResult(item: existing, isNew: false)
-        }
-        return ClipboardUpsertResult(item: try insert(item), isNew: true)
     }
 
     // MARK: - Fetch

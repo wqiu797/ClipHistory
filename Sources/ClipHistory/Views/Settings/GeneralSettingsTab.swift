@@ -22,12 +22,25 @@ struct GeneralSettingsTab: View {
                 HStack {
                     Text("Version")
                     Spacer()
-                    Text("1.0.0")
+                    Text(versionText)
                         .foregroundColor(.secondary)
                 }
             }
         }
         .formStyle(.grouped)
         .padding()
+    }
+
+    private var versionText: String {
+        let version = Bundle.main.object(
+            forInfoDictionaryKey: "CFBundleShortVersionString"
+        ) as? String ?? "—"
+        let build = Bundle.main.object(
+            forInfoDictionaryKey: "CFBundleVersion"
+        ) as? String
+        if let build, !build.isEmpty {
+            return "\(version) (\(build))"
+        }
+        return version
     }
 }
