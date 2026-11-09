@@ -9,8 +9,8 @@ struct PopoverRootView: View {
             // Header
             HStack {
                 SearchBar(text: Binding(
-                    get: { "" },
-                    set: { viewModel.search($0) }
+                    get: { viewModel.searchText },
+                    set: { viewModel.setSearchText($0) }
                 ))
                 .frame(maxWidth: .infinity)
 

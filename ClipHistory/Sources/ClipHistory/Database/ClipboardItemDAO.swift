@@ -58,9 +58,12 @@ final class ClipboardItemDAO: Sendable {
                 ClipboardItem.Columns.createdAt.desc
             )
 
-            if let text = searchText, !text.isEmpty {
+            if let text = searchText?.trimmingCharacters(in: .whitespacesAndNewlines), !text.isEmpty {
+                // Escape LIKE wildcards so a search for "50%" or "a_b" behaves literally.
+                let pattern = "%\(Self.escapeForLike(text))%"
                 query = query.filter(
-                    ClipboardItem.Columns.textContent.like("%\(text)%")
+                    sql: "textContent LIKE ? ESCAPE '\\'",
+                    arguments: [pattern]
                 )
             }
 
@@ -125,5 +128,14 @@ final class ClipboardItemDAO: Sendable {
 
             return expired
         }
+    }
+
+    // MARK: - Helpers
+
+    private static func escapeForLike(_ text: String) -> String {
+        text
+            .replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "%", with: "\\%")
+            .replacingOccurrences(of: "_", with: "\\_")
     }
 }

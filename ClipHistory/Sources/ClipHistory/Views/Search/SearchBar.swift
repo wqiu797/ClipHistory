@@ -12,7 +12,12 @@ struct SearchBar: NSViewRepresentable {
         return searchField
     }
 
-    func updateNSView(_ nsView: NSSearchField, context: Context) {}
+    func updateNSView(_ nsView: NSSearchField, context: Context) {
+        // Keep the native field in sync when the query is changed programmatically (e.g. Esc).
+        if nsView.stringValue != text {
+            nsView.stringValue = text
+        }
+    }
 
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
