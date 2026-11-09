@@ -17,6 +17,7 @@ final class StatusBarController: NSObject, NSApplicationDelegate {
                 systemSymbolName: "clipboard",
                 accessibilityDescription: "ClipHistory"
             )
+            button.toolTip = "ClipHistory"
             button.target = self
             button.action = #selector(handleClick)
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
@@ -32,6 +33,8 @@ final class StatusBarController: NSObject, NSApplicationDelegate {
         CleanupScheduler.shared.start()
         sweepOrphanedImages()
     }
+
+    // MARK: - Menu bar
 
     @objc private func handleClick() {
         guard let event = NSApp.currentEvent else { return }
@@ -55,21 +58,57 @@ final class StatusBarController: NSObject, NSApplicationDelegate {
         statusItem.menu = nil
     }
 
-    private func togglePopover() {
-        guard let button = statusItem.button else { return }
+    // MARK: - Popover
 
+    private func togglePopover() {
         if popover.isShown {
-            popover.performClose(nil)
+            closePopover()
         } else {
-            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-            popover.contentViewController?.view.window?.makeKey()
+            showPopover()
         }
     }
 
     func showPopover() {
         guard let button = statusItem.button, !popover.isShown else { return }
+
+        NSApp.activate(ignoringOtherApps: true)
         popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
         popover.contentViewController?.view.window?.makeKey()
+        focusSearchField()
+    }
+
+    func closePopover() {
+        guard popover.isShown else { return }
+        popover.performClose(nil)
+    }
+
+    /// Focuses the search field once the popover window is on screen so typing filters immediately.
+    private func focusSearchField() {
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .milliseconds(50))
+            self?.focusSearchFieldNow()
+        }
+    }
+
+    private func focusSearchFieldNow() {
+        guard let contentView = popover.contentViewController?.view,
+              let window = contentView.window,
+              let searchField = Self.firstSearchField(in: contentView)
+        else { return }
+
+        window.makeFirstResponder(searchField)
+    }
+
+    private static func firstSearchField(in view: NSView) -> NSSearchField? {
+        if let searchField = view as? NSSearchField {
+            return searchField
+        }
+        for subview in view.subviews {
+            if let found = firstSearchField(in: subview) {
+                return found
+            }
+        }
+        return nil
     }
 
     // MARK: - Storage maintenance

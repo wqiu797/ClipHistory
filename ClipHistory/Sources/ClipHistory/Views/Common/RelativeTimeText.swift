@@ -3,15 +3,16 @@ import SwiftUI
 struct RelativeTimeText: View {
     let date: Date
 
-    var body: some View {
-        Text(relativeTimeString(for: date))
-            .font(.caption2)
-            .foregroundColor(.secondary)
-    }
-
-    private func relativeTimeString(for date: Date) -> String {
+    @MainActor
+    private static let formatter: RelativeDateTimeFormatter = {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .abbreviated
-        return formatter.localizedString(for: date, relativeTo: Date())
+        return formatter
+    }()
+
+    var body: some View {
+        Text(Self.formatter.localizedString(for: date, relativeTo: Date()))
+            .font(.caption2)
+            .foregroundColor(.secondary)
     }
 }

@@ -28,15 +28,18 @@
 		9F3B10218C848488AD9C558A /* RelativeTimeText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0054FCDB111868FE33AF552F /* RelativeTimeText.swift */; };
 		A5660456E80DBE9A541264AF /* ImageCardContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33D1EB297C9E84A3A5CD947 /* ImageCardContent.swift */; };
 		A622D4032E7D3958C26019C4 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DCBA1DECD779C70E41E6D1 /* Theme.swift */; };
+		DDEC7CE1E0853BCA479DBE6F /* SourceAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068996B6462F1B77CEDBFB88 /* SourceAppIcon.swift */; };
 		E6DCB9930817575B8F58B1F2 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BD64F654B98BCA3D09FB36 /* Log.swift */; };
 		F077521E74C13D30A5631E84 /* ClipboardItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EAFF4BC955933ABE0424CA /* ClipboardItem.swift */; };
 		F678B4012F3A39061EE24DAC /* ClipboardCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DA1D253F0D83674C448770 /* ClipboardCardView.swift */; };
 		F85472F28DD3A344FD3536F6 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860A401CE71C9EE0C48D0134 /* SettingsView.swift */; };
+		FAE8C4A338766A3723C8670F /* KeyEventHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC377AC3B00EF0625EDFF4F3 /* KeyEventHandler.swift */; };
 		FEE5E9FBCA03921EB09C7852 /* ClipboardMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDB56A4E50A3AF4C8A930F31 /* ClipboardMonitor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0054FCDB111868FE33AF552F /* RelativeTimeText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelativeTimeText.swift; sourceTree = "<group>"; };
+		068996B6462F1B77CEDBFB88 /* SourceAppIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceAppIcon.swift; sourceTree = "<group>"; };
 		17AA2BBC3E45B2D2EA820A70 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		23F37D5CD4FA818365F203DF /* ClipHistoryApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipHistoryApp.swift; sourceTree = "<group>"; };
 		499B741803D028B0AE63BCD0 /* PopoverRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverRootView.swift; sourceTree = "<group>"; };
@@ -57,6 +60,7 @@
 		B42BB5B42D292924CACFD2C1 /* ClipboardItemDAO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardItemDAO.swift; sourceTree = "<group>"; };
 		B49016BC15F9220E1696FBF5 /* GeneralSettingsTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsTab.swift; sourceTree = "<group>"; };
 		B5953FFDF53B272F4EF9E9A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		BC377AC3B00EF0625EDFF4F3 /* KeyEventHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyEventHandler.swift; sourceTree = "<group>"; };
 		C0B8AB97FE3B6B7D40399B76 /* TextCardContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextCardContent.swift; sourceTree = "<group>"; };
 		C1E1AE5F359FF39E7F8A2CAA /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		E6DA1D253F0D83674C448770 /* ClipboardCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardCardView.swift; sourceTree = "<group>"; };
@@ -144,6 +148,7 @@
 		9D95879E66DF8407D99B192D /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				BC377AC3B00EF0625EDFF4F3 /* KeyEventHandler.swift */,
 				0054FCDB111868FE33AF552F /* RelativeTimeText.swift */,
 				69DCBA1DECD779C70E41E6D1 /* Theme.swift */,
 			);
@@ -163,6 +168,7 @@
 			children = (
 				E6DA1D253F0D83674C448770 /* ClipboardCardView.swift */,
 				A33D1EB297C9E84A3A5CD947 /* ImageCardContent.swift */,
+				068996B6462F1B77CEDBFB88 /* SourceAppIcon.swift */,
 				C0B8AB97FE3B6B7D40399B76 /* TextCardContent.swift */,
 			);
 			path = Cards;
@@ -327,6 +333,7 @@
 				3BCB9D7D05DA6E073A0EE4A0 /* HotkeySettingsTab.swift in Sources */,
 				A5660456E80DBE9A541264AF /* ImageCardContent.swift in Sources */,
 				9845F236903885B954C23A31 /* ImageStore.swift in Sources */,
+				FAE8C4A338766A3723C8670F /* KeyEventHandler.swift in Sources */,
 				E6DCB9930817575B8F58B1F2 /* Log.swift in Sources */,
 				29C3753D21D02E153C564B76 /* PopoverRootView.swift in Sources */,
 				9F3B10218C848488AD9C558A /* RelativeTimeText.swift in Sources */,
@@ -334,6 +341,7 @@
 				F85472F28DD3A344FD3536F6 /* SettingsView.swift in Sources */,
 				0E6087CCC39D13B15D90DF36 /* SettingsViewModel.swift in Sources */,
 				9EFACEBE62A550D13A8F29EB /* SettingsWindowController.swift in Sources */,
+				DDEC7CE1E0853BCA479DBE6F /* SourceAppIcon.swift in Sources */,
 				19F535CC401CD1929F00FEEC /* StatusBarController.swift in Sources */,
 				7AA2E2FAAAEED2096B4EAEA6 /* TextCardContent.swift in Sources */,
 				A622D4032E7D3958C26019C4 /* Theme.swift in Sources */,
