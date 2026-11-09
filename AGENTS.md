@@ -4,33 +4,33 @@
 
 This repository contains a native macOS menu bar app named ClipHistory.
 
-- `ClipHistory/Sources/ClipHistory/` contains all Swift source code.
+- `Sources/ClipHistory/` contains all Swift source code.
 - `Models/`, `Database/`, `Services/`, and `ViewModels/` hold app logic.
 - `Views/` contains SwiftUI/AppKit UI code, grouped by feature (`MenuBar`, `Cards`, `Search`, `Settings`, `Common`).
 - `Resources/` contains `Info.plist` and `Assets.xcassets`.
-- `ClipHistory/project.yml` is the source of truth for the generated Xcode project.
-- `ClipHistory/Package.swift` declares Swift Package Manager dependencies.
-- `ClipHistory/Tests/ClipHistoryTests/` contains the unit tests, wired into the
-  generated project by the `ClipHistoryTests` target.
+- `project.yml` is the source of truth for the generated Xcode project.
+- `Package.swift` declares Swift Package Manager dependencies.
+- `Tests/ClipHistoryTests/` contains the unit tests, wired into the generated
+  project by the `ClipHistoryTests` target.
 
 ## Build, Test, and Development Commands
 
-Run commands from the repository root unless noted.
+Run commands from the repository root.
 
 ```bash
-cd ClipHistory && xcodegen generate
+xcodegen generate
 ```
 
 Regenerates `ClipHistory.xcodeproj` after adding or removing Swift files.
 
 ```bash
-cd ClipHistory && ./build.sh
+./build.sh
 ```
 
 Builds Release, stops any running ClipHistory instance, installs to `/Applications`, and launches the app.
 
 ```bash
-cd ClipHistory && xcodebuild -project ClipHistory.xcodeproj -scheme ClipHistory -configuration Debug build
+xcodebuild -project ClipHistory.xcodeproj -scheme ClipHistory -configuration Debug build
 ```
 
 Performs a quick Debug build without installing.
@@ -43,15 +43,14 @@ Prefer SwiftUI for UI, but use AppKit where macOS menu bar behavior requires it.
 
 ## Testing Guidelines
 
-Run the unit tests (DAO/database behavior) from `ClipHistory/`:
+Run the unit tests (DAO/database behavior) from the repository root:
 
 ```bash
-cd ClipHistory
 xcodebuild -project ClipHistory.xcodeproj -scheme ClipHistory \
   -configuration Debug -destination 'platform=macOS' test
 ```
 
-Tests live in `ClipHistory/Tests/ClipHistoryTests/` and run against an
+Tests live in `Tests/ClipHistoryTests/` and run against an
 in-memory `DatabaseQueue` migrated with `AppDatabase.migrator`. When XCTest
 launches the app as its test host, `StatusBarController` skips starting the
 menu bar item, clipboard monitor and cleanup scheduler.

@@ -7,12 +7,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Prerequisite:** `brew install xcodegen` (project generator)
 - **Minimum deployment:** macOS 14.0, Swift 6.0
 
+Run commands from the repository root.
+
 ```bash
 # Generate Xcode project (after adding/removing files)
-cd ClipHistory && xcodegen generate
+xcodegen generate
 
 # Build, install to /Applications, kill old instance, launch
-cd ClipHistory && ./build.sh
+./build.sh
 
 # Quick debug build only (no install)
 xcodebuild -project ClipHistory.xcodeproj -scheme ClipHistory -configuration Debug build

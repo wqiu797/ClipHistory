@@ -24,8 +24,7 @@ macOS menu bar clipboard history manager. Records everything you copy — text a
 # Install xcodegen if needed
 brew install xcodegen
 
-# Clone and build
-cd ClipHistory
+# From the repository root
 xcodegen generate
 ./build.sh
 ```
