@@ -34,9 +34,9 @@ final class ClipboardItemDAO: Sendable {
     @discardableResult
     func insert(_ item: ClipboardItem) throws -> ClipboardItem {
         try dbQueue.write { db in
-            var newItem = item
-            try newItem.insert(db)
-            return newItem
+            // `inserted` returns a copy whose `didInsert` callback has set the row id;
+            // `PersistableRecord.insert` returns Void and leaves the value untouched.
+            try item.inserted(db)
         }
     }
 

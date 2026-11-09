@@ -23,9 +23,11 @@
 		79B708C18B2F92F851DE8CBD /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 842E478D5BA6F6E63B55BEB0 /* GRDB */; };
 		7AA2E2FAAAEED2096B4EAEA6 /* TextCardContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0B8AB97FE3B6B7D40399B76 /* TextCardContent.swift */; };
 		86BD3E64E17B154EAD7763C5 /* ClipboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB7E3D722744D02454A4CBA2 /* ClipboardViewModel.swift */; };
+		8FB58F6944B47E580759DA10 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = 00801545DE29B7BC4C65A882 /* GRDB */; };
 		9845F236903885B954C23A31 /* ImageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 818C3F7F2D469D85B268A023 /* ImageStore.swift */; };
 		9EFACEBE62A550D13A8F29EB /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A57ACC2F59CD4BE3333FDB3F /* SettingsWindowController.swift */; };
 		9F3B10218C848488AD9C558A /* RelativeTimeText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0054FCDB111868FE33AF552F /* RelativeTimeText.swift */; };
+		A12D72DB4E72895BB1E1DC0B /* ClipboardItemDAOTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507B988DB58921BD4E3D7D2B /* ClipboardItemDAOTests.swift */; };
 		A5660456E80DBE9A541264AF /* ImageCardContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33D1EB297C9E84A3A5CD947 /* ImageCardContent.swift */; };
 		A622D4032E7D3958C26019C4 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DCBA1DECD779C70E41E6D1 /* Theme.swift */; };
 		DDEC7CE1E0853BCA479DBE6F /* SourceAppIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068996B6462F1B77CEDBFB88 /* SourceAppIcon.swift */; };
@@ -37,16 +39,28 @@
 		FEE5E9FBCA03921EB09C7852 /* ClipboardMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDB56A4E50A3AF4C8A930F31 /* ClipboardMonitor.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		E40E72C6D09050BA1F6819ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 849A00B1AE00436B23D48C51 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2A61C1F5269AD2B33E33F912;
+			remoteInfo = ClipHistory;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		0054FCDB111868FE33AF552F /* RelativeTimeText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RelativeTimeText.swift; sourceTree = "<group>"; };
 		068996B6462F1B77CEDBFB88 /* SourceAppIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceAppIcon.swift; sourceTree = "<group>"; };
 		17AA2BBC3E45B2D2EA820A70 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		23F37D5CD4FA818365F203DF /* ClipHistoryApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipHistoryApp.swift; sourceTree = "<group>"; };
 		499B741803D028B0AE63BCD0 /* PopoverRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopoverRootView.swift; sourceTree = "<group>"; };
+		507B988DB58921BD4E3D7D2B /* ClipboardItemDAOTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardItemDAOTests.swift; sourceTree = "<group>"; };
 		539C100C3454F066418E1895 /* ContentType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentType.swift; sourceTree = "<group>"; };
 		53CE0208FDA4E9443B9E7F9E /* CleanupScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleanupScheduler.swift; sourceTree = "<group>"; };
 		547643D0AF2DEDD22F6DED0A /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		69DCBA1DECD779C70E41E6D1 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		80DB774D688D670689C5162E /* ClipHistoryTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClipHistoryTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		818C3F7F2D469D85B268A023 /* ImageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStore.swift; sourceTree = "<group>"; };
 		860A401CE71C9EE0C48D0134 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		92BFB61166A7A08390D1AF3B /* AppDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDatabase.swift; sourceTree = "<group>"; };
@@ -69,6 +83,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		3F3F0E1905BF32C17BA9799A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8FB58F6944B47E580759DA10 /* GRDB in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6B23475BB5AF68DF363FC7D5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -81,6 +103,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1463548B233632BC2F385E11 /* ClipHistoryTests */ = {
+			isa = PBXGroup;
+			children = (
+				507B988DB58921BD4E3D7D2B /* ClipboardItemDAOTests.swift */,
+			);
+			name = ClipHistoryTests;
+			path = Tests/ClipHistoryTests;
+			sourceTree = "<group>";
+		};
 		2A34D1E7CC216ED4AE44BF16 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
@@ -159,6 +190,7 @@
 			isa = PBXGroup;
 			children = (
 				9FA079871316DB6956B65357 /* ClipHistory.app */,
+				80DB774D688D670689C5162E /* ClipHistoryTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -196,6 +228,7 @@
 			isa = PBXGroup;
 			children = (
 				50EA2F7BE4C1B2FFF8365583 /* ClipHistory */,
+				1463548B233632BC2F385E11 /* ClipHistoryTests */,
 				C3E66A8926C4072253E86994 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -245,6 +278,26 @@
 			productReference = 9FA079871316DB6956B65357 /* ClipHistory.app */;
 			productType = "com.apple.product-type.application";
 		};
+		9915BF3748332A0A2107052C /* ClipHistoryTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D0681697FDFD5ED11D541C33 /* Build configuration list for PBXNativeTarget "ClipHistoryTests" */;
+			buildPhases = (
+				E10B944D7A97F44F740AE03A /* Sources */,
+				3F3F0E1905BF32C17BA9799A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D3A97DB7B874B23B293811AC /* PBXTargetDependency */,
+			);
+			name = ClipHistoryTests;
+			packageProductDependencies = (
+				00801545DE29B7BC4C65A882 /* GRDB */,
+			);
+			productName = ClipHistoryTests;
+			productReference = 80DB774D688D670689C5162E /* ClipHistoryTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -255,6 +308,9 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					2A61C1F5269AD2B33E33F912 = {
+						ProvisioningStyle = Automatic;
+					};
+					9915BF3748332A0A2107052C = {
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -278,6 +334,7 @@
 			projectRoot = "";
 			targets = (
 				2A61C1F5269AD2B33E33F912 /* ClipHistory */,
+				9915BF3748332A0A2107052C /* ClipHistoryTests */,
 			);
 		};
 /* End PBXProject section */
@@ -348,7 +405,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E10B944D7A97F44F740AE03A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A12D72DB4E72895BB1E1DC0B /* ClipboardItemDAOTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		D3A97DB7B874B23B293811AC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2A61C1F5269AD2B33E33F912 /* ClipHistory */;
+			targetProxy = E40E72C6D09050BA1F6819ED /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		231EB71C338CDE671C29A351 /* Release */ = {
@@ -372,6 +445,25 @@
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = (
 					"$(inherited)",
 				);
+			};
+			name = Release;
+		};
+		3DD2B32D5DE82BBB2874DBA5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.cliphistory.app.tests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ClipHistory.app/Contents/MacOS/ClipHistory";
 			};
 			name = Release;
 		};
@@ -518,6 +610,25 @@
 			};
 			name = Debug;
 		};
+		F418264A8181B618F39513B4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.cliphistory.app.tests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ClipHistory.app/Contents/MacOS/ClipHistory";
+			};
+			name = Debug;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -526,6 +637,15 @@
 			buildConfigurations = (
 				D721499AA51BCBE5C7D17EE4 /* Debug */,
 				5F61630CE6EED736C37CC3F1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		D0681697FDFD5ED11D541C33 /* Build configuration list for PBXNativeTarget "ClipHistoryTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F418264A8181B618F39513B4 /* Debug */,
+				3DD2B32D5DE82BBB2874DBA5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
@@ -561,6 +681,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		00801545DE29B7BC4C65A882 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 366B69EE194F2E0A32A266D9 /* XCRemoteSwiftPackageReference "GRDB.swift" */;
+			productName = GRDB;
+		};
 		842E478D5BA6F6E63B55BEB0 /* GRDB */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 366B69EE194F2E0A32A266D9 /* XCRemoteSwiftPackageReference "GRDB.swift" */;

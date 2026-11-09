@@ -94,7 +94,8 @@ final class AppDatabase: Sendable {
 
     // MARK: - Schema
 
-    private static var migrator: DatabaseMigrator {
+    /// Internal rather than private so tests can migrate an in-memory database.
+    static var migrator: DatabaseMigrator {
         var migrator = DatabaseMigrator()
 
         migrator.registerMigration("v1") { db in

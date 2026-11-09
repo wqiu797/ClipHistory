@@ -43,3 +43,33 @@ targets:
       - name: "SwiftLint (skip)"
         script: "echo 'Skip lint'"
         basedOnDependencyAnalysis: false
+
+  ClipHistoryTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Tests/ClipHistoryTests
+    dependencies:
+      - target: ClipHistory
+      - package: GRDB
+        product: GRDB
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.cliphistory.app.tests
+        GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_IDENTITY: "-"
+        CODE_SIGN_STYLE: Automatic
+
+schemes:
+  ClipHistory:
+    build:
+      targets:
+        ClipHistory: all
+        ClipHistoryTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      gatherCoverageData: true
+      targets:
+        - ClipHistoryTests

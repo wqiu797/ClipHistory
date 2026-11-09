@@ -9,6 +9,12 @@ final class StatusBarController: NSObject, NSApplicationDelegate {
     private var popover: NSPopover!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // When XCTest launches the app as its test host, leave the menu bar item,
+        // clipboard monitor and database alone.
+        guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else {
+            return
+        }
+
         StatusBarController.shared = self
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
