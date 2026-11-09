@@ -6,7 +6,11 @@ cd "$(dirname "$0")"
 PROJECT="ClipHistory.xcodeproj"
 SCHEME="ClipHistory"
 CONFIGURATION="Release"
-DERIVED_DATA="$PWD/build"
+# Build in a temporary directory and delete the product afterwards: Xcode
+# registers every built .app with LaunchServices, which would otherwise show up
+# as a second ClipHistory in Spotlight.
+TMP_ROOT="${TMPDIR:-/tmp}"
+DERIVED_DATA="${TMP_ROOT%/}/cliphistory-derived-data"
 APP_PATH="$DERIVED_DATA/Build/Products/$CONFIGURATION/ClipHistory.app"
 INSTALL_PATH="/Applications/ClipHistory.app"
 LOG_FILE="$DERIVED_DATA/build.log"
@@ -17,6 +21,7 @@ if [ ! -d "$PROJECT" ]; then
 fi
 
 XCODEBUILD="/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild"
+LSREGISTER="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister"
 if [ ! -x "$XCODEBUILD" ]; then
     XCODEBUILD="$(command -v xcodebuild || true)"
 fi
@@ -26,9 +31,6 @@ if [ -z "$XCODEBUILD" ] || [ ! -x "$XCODEBUILD" ]; then
 fi
 
 mkdir -p "$DERIVED_DATA"
-# Keep Spotlight from indexing build products, which would otherwise show up as
-# duplicate ClipHistory apps alongside the installed copy.
-touch "$DERIVED_DATA/.metadata_never_index"
 
 echo "Building ClipHistory ($CONFIGURATION)..."
 if ! "$XCODEBUILD" \
@@ -61,3 +63,8 @@ echo ""
 echo "Done! ClipHistory is now in /Applications and Launchpad."
 echo "Starting app..."
 open "$INSTALL_PATH"
+
+# Remove the build product and its LaunchServices registration so it does not
+# show up as a second ClipHistory in Spotlight; only /Applications should remain.
+"$LSREGISTER" -u "$APP_PATH" >/dev/null 2>&1 || true
+rm -rf "$APP_PATH"

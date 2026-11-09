@@ -22,7 +22,9 @@ source errors.
 
 ## Build, Test, and Development Commands
 
-Run commands from the repository root.
+Run commands from the repository root. Build products go to
+`${TMPDIR:-/tmp}/cliphistory-derived-data` and are removed after use, so
+Spotlight only keeps the installed copy in `/Applications`.
 
 ```bash
 xcodegen generate
@@ -37,7 +39,9 @@ Regenerates `ClipHistory.xcodeproj` after adding or removing Swift files.
 Builds Release, stops any running ClipHistory instance, installs to `/Applications`, and launches the app.
 
 ```bash
-xcodebuild -project ClipHistory.xcodeproj -scheme ClipHistory -configuration Debug build
+DERIVED_DATA="${TMPDIR:-/tmp}/cliphistory-derived-data"
+xcodebuild -project ClipHistory.xcodeproj -scheme ClipHistory \
+  -configuration Debug -derivedDataPath "$DERIVED_DATA" build
 ```
 
 Performs a quick Debug build without installing.
@@ -53,9 +57,12 @@ Prefer SwiftUI for UI, but use AppKit where macOS menu bar behavior requires it.
 Run the unit tests (DAO/database behavior) from the repository root:
 
 ```bash
-xcodebuild -project ClipHistory.xcodeproj -scheme ClipHistory \
-  -configuration Debug -destination 'platform=macOS' test
+./test.sh
 ```
+
+`test.sh` builds into `${TMPDIR:-/tmp}/cliphistory-derived-data` and removes
+the test host afterwards, so Spotlight only keeps the installed copy in
+`/Applications`.
 
 Tests live in `Tests/ClipHistoryTests/` and run against an
 in-memory `DatabaseQueue` migrated with `AppDatabase.migrator`. When XCTest

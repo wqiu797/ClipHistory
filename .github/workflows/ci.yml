@@ -23,11 +23,4 @@ jobs:
         run: xcodegen generate
 
       - name: Build and test
-        run: |
-          xcodebuild \
-            -project ClipHistory.xcodeproj \
-            -scheme ClipHistory \
-            -configuration Debug \
-            -derivedDataPath build \
-            -destination 'platform=macOS' \
-            test
+        run: ./test.sh

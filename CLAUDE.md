@@ -9,7 +9,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Prerequisite:** `brew install xcodegen` (project generator)
 - **Minimum deployment:** macOS 14.0, Swift 6.0
 
-Run commands from the repository root.
+Run commands from the repository root. Build products go to
+`${TMPDIR:-/tmp}/cliphistory-derived-data` and are deleted after install/tests,
+so Spotlight only keeps the installed copy in `/Applications`.
 
 ```bash
 # Generate Xcode project (after adding/removing files)
@@ -19,10 +21,12 @@ xcodegen generate
 ./build.sh
 
 # Quick debug build only (no install)
-xcodebuild -project ClipHistory.xcodeproj -scheme ClipHistory -configuration Debug build
+DERIVED_DATA="${TMPDIR:-/tmp}/cliphistory-derived-data"
+xcodebuild -project ClipHistory.xcodeproj -scheme ClipHistory \
+  -configuration Debug -derivedDataPath "$DERIVED_DATA" build
 
-# Run the DAO/database unit tests
-xcodebuild -project ClipHistory.xcodeproj -scheme ClipHistory -configuration Debug test
+# Run the DAO/database unit tests (also cleans the test host from Spotlight)
+./test.sh
 ```
 
 - `project.yml` is the source of truth for the Xcode project (xcodegen spec)
@@ -32,7 +36,7 @@ xcodebuild -project ClipHistory.xcodeproj -scheme ClipHistory -configuration Deb
 
 ## Testing
 
-Unit tests live in `Tests/ClipHistoryTests/` and run against an in-memory `DatabaseQueue` migrated with `AppDatabase.migrator`, using the `xcodebuild test` command above. When XCTest launches the app as its test host, `StatusBarController` skips starting the menu bar item, clipboard monitor and cleanup scheduler.
+Unit tests live in `Tests/ClipHistoryTests/` and run against an in-memory `DatabaseQueue` migrated with `AppDatabase.migrator`, via `./test.sh`. When XCTest launches the app as its test host, `StatusBarController` skips starting the menu bar item, clipboard monitor and cleanup scheduler.
 
 ## Architecture
 
