@@ -260,7 +260,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = F8CC57EBECED88318E896431 /* Build configuration list for PBXNativeTarget "ClipHistory" */;
 			buildPhases = (
-				84CEB9C1B490F0BC7690739B /* SwiftLint (skip) */,
 				90ABC6A9396758D62D835467 /* Sources */,
 				39ED68540B975CC5C1939B8D /* Resources */,
 				6B23475BB5AF68DF363FC7D5 /* Frameworks */,
@@ -349,28 +348,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		84CEB9C1B490F0BC7690739B /* SwiftLint (skip) */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "SwiftLint (skip)";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "echo 'Skip lint'";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		90ABC6A9396758D62D835467 /* Sources */ = {

@@ -39,10 +39,6 @@ targets:
         ENABLE_HARDENED_RUNTIME: YES
         CODE_SIGN_IDENTITY: "-"
         CODE_SIGN_STYLE: Automatic
-    preBuildScripts:
-      - name: "SwiftLint (skip)"
-        script: "echo 'Skip lint'"
-        basedOnDependencyAnalysis: false
 
   ClipHistoryTests:
     type: bundle.unit-test
