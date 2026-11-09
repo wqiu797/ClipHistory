@@ -12,16 +12,23 @@ final class SettingsViewModel {
         }
     }
 
+    var loginItemError: String?
+
     var launchAtLogin: Bool {
         didSet {
+            loginItemError = nil
             do {
                 if launchAtLogin {
                     try SMAppService.mainApp.register()
+                    if SMAppService.mainApp.status != .enabled {
+                        loginItemError = "Approve ClipHistory in System Settings > General > Login Items."
+                    }
                 } else {
                     try SMAppService.mainApp.unregister()
                 }
             } catch {
                 Log.ui.error("Failed to toggle login item: \(String(describing: error), privacy: .public)")
+                loginItemError = "Could not update the login item: \(error.localizedDescription)"
                 launchAtLogin = SMAppService.mainApp.status == .enabled
             }
         }
@@ -30,5 +37,9 @@ final class SettingsViewModel {
     init() {
         retentionDays = Preferences.retentionDays
         launchAtLogin = SMAppService.mainApp.status == .enabled
+    }
+
+    func openLoginItemsSettings() {
+        SMAppService.openSystemSettingsLoginItems()
     }
 }

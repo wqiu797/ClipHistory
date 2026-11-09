@@ -13,6 +13,7 @@ final class ClipboardViewModel {
     var searchText = ""
     var itemCount: Int = 0
     var retentionDays: Int = 3
+    var isStoragePersistent: Bool = AppDatabase.shared.isPersistent
 
     private var searchTask: Task<Void, Never>?
     private var loadGeneration = 0

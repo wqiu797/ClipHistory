@@ -126,6 +126,13 @@ struct PopoverRootView: View {
 
             Spacer()
 
+            if !viewModel.isStoragePersistent {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.system(size: 10))
+                    .foregroundColor(.orange)
+                    .help("History is not being saved. Check disk access and relaunch ClipHistory.")
+            }
+
             Text("↑↓ ⏎ esc")
                 .font(.caption2)
                 .foregroundColor(.secondary.opacity(0.7))

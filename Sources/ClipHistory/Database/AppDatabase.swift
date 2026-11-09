@@ -5,10 +5,13 @@ final class AppDatabase: Sendable {
     static let shared = AppDatabase()
 
     let dbQueue: DatabaseQueue
+    /// False when the app fell back to an in-memory database and history will not survive quitting.
+    let isPersistent: Bool
 
     /// Injection point for tests / tools that need an isolated database.
     init(dbQueue: DatabaseQueue) {
         self.dbQueue = dbQueue
+        self.isPersistent = true
     }
 
     private init() {
@@ -35,7 +38,9 @@ final class AppDatabase: Sendable {
         )
 
         let dbURL = dbDirectory.appendingPathComponent("cliphistory.sqlite")
-        dbQueue = Self.openRecovering(at: dbURL)
+        let opened = Self.openRecovering(at: dbURL)
+        dbQueue = opened.queue
+        isPersistent = opened.persistent
         Self.restrictDatabasePermissions(at: dbURL)
     }
 
@@ -56,11 +61,13 @@ final class AppDatabase: Sendable {
 
     /// Opens the database, migrating it if necessary. A damaged database is moved aside and
     /// recreated instead of crashing the app on launch.
-    private static func openRecovering(at url: URL) -> DatabaseQueue {
+    private static func openRecovering(
+        at url: URL
+    ) -> (queue: DatabaseQueue, persistent: Bool) {
         do {
             let queue = try DatabaseQueue(path: url.path)
             try migrator.migrate(queue)
-            return queue
+            return (queue, true)
         } catch {
             Log.database.error(
                 "Could not open database at \(url.path, privacy: .public): \(String(describing: error), privacy: .public)"
@@ -73,7 +80,7 @@ final class AppDatabase: Sendable {
             let queue = try DatabaseQueue(path: url.path)
             try migrator.migrate(queue)
             Log.database.notice("Recreated database after moving the damaged file aside")
-            return queue
+            return (queue, true)
         } catch {
             Log.database.fault(
                 "Could not recreate database: \(String(describing: error), privacy: .public)"
@@ -83,7 +90,7 @@ final class AppDatabase: Sendable {
         // Last resort: keep the app usable, even if history cannot be persisted.
         if let memory = try? DatabaseQueue(), (try? migrator.migrate(memory)) != nil {
             Log.database.fault("Falling back to an in-memory database; history will not be persisted")
-            return memory
+            return (memory, false)
         }
 
         fatalError("ClipHistory could not create a usable database")

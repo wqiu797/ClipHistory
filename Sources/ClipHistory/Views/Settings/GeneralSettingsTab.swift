@@ -16,6 +16,16 @@ struct GeneralSettingsTab: View {
 
             Section {
                 Toggle("Launch at login", isOn: $viewModel.launchAtLogin)
+
+                if let message = viewModel.loginItemError {
+                    Text(message)
+                        .font(.caption)
+                        .foregroundColor(.red)
+                    Button("Open Login Items Settings…") {
+                        viewModel.openLoginItemsSettings()
+                    }
+                    .font(.caption)
+                }
             }
 
             Section {
