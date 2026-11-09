@@ -40,6 +40,7 @@ Or open `ClipHistory.xcodeproj` in Xcode and press Cmd+R.
 - Click a card to copy it back to the clipboard
 - Hover over a card to reveal pin and delete buttons
 - Press Cmd+Shift+V to open the panel from anywhere
+- Navigate with ↑/↓, press Return to copy, Esc to close, or Cmd+1–9 to copy the nth item
 - Right-click the menu bar icon for the quit option
 
 ## Built With

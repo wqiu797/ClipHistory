@@ -12,3 +12,6 @@ DerivedData/
 # IDE configs (not project code)
 .claude/
 .vscode/
+
+# Local DerivedData used for verification builds
+build/
