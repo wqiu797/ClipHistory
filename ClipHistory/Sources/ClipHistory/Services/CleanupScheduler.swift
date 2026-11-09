@@ -33,16 +33,25 @@ final class CleanupScheduler: @unchecked Sendable {
             to: Date()
         ) else { return }
 
-        do {
-            let expired = try dao.deleteExpired(before: cutoff)
-            for item in expired where item.contentType == .image {
-                imageStore.deleteImages(
-                    imageName: item.imageFileName,
-                    thumbName: item.thumbnailFileName
-                )
+        let dao = self.dao
+        let imageStore = self.imageStore
+
+        // Deletion touches the disk, so keep it off the main thread.
+        DispatchQueue.global(qos: .utility).async {
+            do {
+                let expired = try dao.deleteExpired(before: cutoff)
+                for item in expired where item.contentType == .image {
+                    imageStore.deleteImages(
+                        imageName: item.imageFileName,
+                        thumbName: item.thumbnailFileName
+                    )
+                }
+                if !expired.isEmpty {
+                    Log.cleanup.notice("Removed \(expired.count) expired clipboard items")
+                }
+            } catch {
+                Log.cleanup.error("Cleanup failed: \(String(describing: error), privacy: .public)")
             }
-        } catch {
-            print("Cleanup failed: \(error)")
         }
     }
 }
