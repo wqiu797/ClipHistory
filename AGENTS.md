@@ -86,6 +86,8 @@ Items carrying `org.nspasteboard.ConcealedType`, `org.nspasteboard.TransientType
 
 The popover handles ↑/↓, Return, Esc and Cmd+1–9 through `KeyEventHandler`, a local `NSEvent` monitor installed only while the popover window is on screen. Keys are passed through during an active IME composition (`hasMarkedText()`).
 
+`ClipboardCardView` uses a single `Button` whose label includes the card's padding and a `.contentShape(RoundedRectangle(...))`. Keep the padding inside that label and the pin/delete buttons as `ZStack` siblings on top: moving the padding outside the button (or relying on `Text`/`Spacer` hit areas) makes the empty space on short items unclickable.
+
 For image PNG conversion, use `NSImage.tiffRepresentation` to `NSBitmapImageRep(data:)`; direct `cgImage` conversion can produce transparent images.
 
 `SettingsWindowController` manually creates an `NSWindow` because SwiftUI `Settings` scenes do not behave reliably in this menu-bar-only app.

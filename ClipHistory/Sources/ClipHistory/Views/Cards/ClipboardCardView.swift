@@ -12,20 +12,21 @@ struct ClipboardCardView: View {
     @State private var copyToken = 0
 
     var body: some View {
-        HStack(spacing: 10) {
-            // Pin indicator line
-            if item.pinnedAt != nil {
-                RoundedRectangle(cornerRadius: 2)
-                    .fill(Theme.primaryBlue)
-                    .frame(width: 3)
-            }
-
-            // Content
+        ZStack(alignment: .topTrailing) {
+            // The whole card - including its padding - is the copy button, so short
+            // text and image items stay clickable across the empty space.
             Button {
                 copyToken += 1
                 onCopy()
             } label: {
-                HStack(spacing: 8) {
+                HStack(spacing: 10) {
+                    // Pin indicator line
+                    if item.pinnedAt != nil {
+                        RoundedRectangle(cornerRadius: 2)
+                            .fill(Theme.primaryBlue)
+                            .frame(width: 3)
+                    }
+
                     content
 
                     Spacer(minLength: 0)
@@ -35,6 +36,9 @@ struct ClipboardCardView: View {
                             SourceAppIcon(bundleIdentifier: item.sourceAppBundleId)
                             RelativeTimeText(date: item.createdAt)
                         }
+                        // The action buttons take this spot on hover, so there is no
+                        // layout shift when they appear.
+                        .opacity(isHovered ? 0 : 1)
 
                         if showCopied {
                             Text("Copied!")
@@ -43,11 +47,15 @@ struct ClipboardCardView: View {
                         }
                     }
                 }
+                .padding(.horizontal, 10)
+                .padding(.vertical, 8)
+                .contentShape(RoundedRectangle(cornerRadius: 8))
             }
             .buttonStyle(.plain)
             .help(item.contentType == .text ? "Copy to clipboard" : "Copy image to clipboard")
 
-            // Action buttons
+            // Action buttons are siblings of the button, so their clicks win over
+            // the copy action while the rest of the card still copies.
             if isHovered {
                 HStack(spacing: 6) {
                     Button(action: onPin) {
@@ -68,10 +76,12 @@ struct ClipboardCardView: View {
                     .help("Delete")
                     .accessibilityLabel("Delete")
                 }
+                .padding(.top, 8)
+                .padding(.trailing, 10)
+                .transition(.opacity)
+                .allowsHitTesting(isHovered)
             }
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 8)
         .background(
             RoundedRectangle(cornerRadius: 8)
                 .fill(backgroundColor)
@@ -79,6 +89,7 @@ struct ClipboardCardView: View {
         .overlay(
             RoundedRectangle(cornerRadius: 8)
                 .stroke(borderColor, lineWidth: 1)
+                .allowsHitTesting(false)
         )
         .contentShape(RoundedRectangle(cornerRadius: 8))
         .onHover { hovering in
