@@ -28,6 +28,7 @@
 		9F3B10218C848488AD9C558A /* RelativeTimeText.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0054FCDB111868FE33AF552F /* RelativeTimeText.swift */; };
 		A5660456E80DBE9A541264AF /* ImageCardContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A33D1EB297C9E84A3A5CD947 /* ImageCardContent.swift */; };
 		A622D4032E7D3958C26019C4 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69DCBA1DECD779C70E41E6D1 /* Theme.swift */; };
+		E6DCB9930817575B8F58B1F2 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9BD64F654B98BCA3D09FB36 /* Log.swift */; };
 		F077521E74C13D30A5631E84 /* ClipboardItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96EAFF4BC955933ABE0424CA /* ClipboardItem.swift */; };
 		F678B4012F3A39061EE24DAC /* ClipboardCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DA1D253F0D83674C448770 /* ClipboardCardView.swift */; };
 		F85472F28DD3A344FD3536F6 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 860A401CE71C9EE0C48D0134 /* SettingsView.swift */; };
@@ -59,6 +60,7 @@
 		C0B8AB97FE3B6B7D40399B76 /* TextCardContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextCardContent.swift; sourceTree = "<group>"; };
 		C1E1AE5F359FF39E7F8A2CAA /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		E6DA1D253F0D83674C448770 /* ClipboardCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardCardView.swift; sourceTree = "<group>"; };
+		E9BD64F654B98BCA3D09FB36 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		FDB56A4E50A3AF4C8A930F31 /* ClipboardMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardMonitor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -134,6 +136,7 @@
 				53CE0208FDA4E9443B9E7F9E /* CleanupScheduler.swift */,
 				FDB56A4E50A3AF4C8A930F31 /* ClipboardMonitor.swift */,
 				818C3F7F2D469D85B268A023 /* ImageStore.swift */,
+				E9BD64F654B98BCA3D09FB36 /* Log.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -324,6 +327,7 @@
 				3BCB9D7D05DA6E073A0EE4A0 /* HotkeySettingsTab.swift in Sources */,
 				A5660456E80DBE9A541264AF /* ImageCardContent.swift in Sources */,
 				9845F236903885B954C23A31 /* ImageStore.swift in Sources */,
+				E6DCB9930817575B8F58B1F2 /* Log.swift in Sources */,
 				29C3753D21D02E153C564B76 /* PopoverRootView.swift in Sources */,
 				9F3B10218C848488AD9C558A /* RelativeTimeText.swift in Sources */,
 				076DF9678AD2CDC6713BDCB6 /* SearchBar.swift in Sources */,

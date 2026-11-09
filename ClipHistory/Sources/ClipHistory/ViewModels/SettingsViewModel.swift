@@ -21,7 +21,7 @@ final class SettingsViewModel {
                     try SMAppService.mainApp.unregister()
                 }
             } catch {
-                print("Failed to toggle login item: \(error)")
+                Log.ui.error("Failed to toggle login item: \(String(describing: error), privacy: .public)")
                 launchAtLogin = SMAppService.mainApp.status == .enabled
             }
         }
