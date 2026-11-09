@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        working-directory: ClipHistory
+        run: xcodegen generate
+
+      - name: Build and test
+        working-directory: ClipHistory
+        run: |
+          xcodebuild \
+            -project ClipHistory.xcodeproj \
+            -scheme ClipHistory \
+            -configuration Debug \
+            -derivedDataPath build \
+            -destination 'platform=macOS' \
+            test

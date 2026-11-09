@@ -10,8 +10,8 @@ This repository contains a native macOS menu bar app named ClipHistory.
 - `Resources/` contains `Info.plist` and `Assets.xcassets`.
 - `ClipHistory/project.yml` is the source of truth for the generated Xcode project.
 - `ClipHistory/Package.swift` declares Swift Package Manager dependencies.
-
-There is no dedicated test target yet. Add future tests under a `ClipHistoryTests/` target.
+- `ClipHistory/Tests/ClipHistoryTests/` contains the unit tests, wired into the
+  generated project by the `ClipHistoryTests` target.
 
 ## Build, Test, and Development Commands
 
@@ -43,14 +43,27 @@ Prefer SwiftUI for UI, but use AppKit where macOS menu bar behavior requires it.
 
 ## Testing Guidelines
 
-No automated test suite exists yet. For now, verify manually:
+Run the unit tests (DAO/database behavior) from `ClipHistory/`:
+
+```bash
+cd ClipHistory
+xcodebuild -project ClipHistory.xcodeproj -scheme ClipHistory \
+  -configuration Debug -destination 'platform=macOS' test
+```
+
+Tests live in `ClipHistory/Tests/ClipHistoryTests/` and run against an
+in-memory `DatabaseQueue` migrated with `AppDatabase.migrator`. When XCTest
+launches the app as its test host, `StatusBarController` skips starting the
+menu bar item, clipboard monitor and cleanup scheduler.
+
+Also verify manually:
 
 - text clipboard capture and deduplication
 - image capture, thumbnail display, and copy-back
 - search, pin, delete, and retention behavior
 - menu bar left click, right-click Quit, footer Quit, and settings window
 
-When adding tests, prefer focused unit tests for DAO/database behavior and service-level tests for cleanup and hashing.
+Prefer focused unit tests for DAO/database behavior and service-level tests for cleanup and hashing.
 
 ## Commit & Pull Request Guidelines
 

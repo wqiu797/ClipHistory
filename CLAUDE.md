@@ -16,6 +16,9 @@ cd ClipHistory && ./build.sh
 
 # Quick debug build only (no install)
 xcodebuild -project ClipHistory.xcodeproj -scheme ClipHistory -configuration Debug build
+
+# Run the DAO/database unit tests
+xcodebuild -project ClipHistory.xcodeproj -scheme ClipHistory -configuration Debug test
 ```
 
 - `project.yml` is the source of truth for the Xcode project (xcodegen spec)
