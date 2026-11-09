@@ -4,6 +4,8 @@
 
 This repository contains a native macOS menu bar app named ClipHistory.
 
+> Keep this file and `CLAUDE.md` in sync when build steps, layout or pitfalls change.
+
 - `Sources/ClipHistory/` contains all Swift source code.
 - `Models/`, `Database/`, `Services/`, and `ViewModels/` hold app logic.
 - `Views/` contains SwiftUI/AppKit UI code, grouped by feature (`MenuBar`, `Cards`, `Search`, `Settings`, `Common`).
@@ -11,6 +13,12 @@ This repository contains a native macOS menu bar app named ClipHistory.
 - `project.yml` is the source of truth for the generated Xcode project.
 - `Tests/ClipHistoryTests/` contains the unit tests, wired into the generated
   project by the `ClipHistoryTests` target.
+
+`ClipHistory.xcodeproj` is committed for convenience but is generated from
+`project.yml`. Never edit `project.pbxproj` by hand: run `xcodegen generate`
+after changing the spec or adding/removing files, then commit the regenerated
+project. CI regenerates it before building, so a stale project cannot hide
+source errors.
 
 ## Build, Test, and Development Commands
 

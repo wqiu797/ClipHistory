@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> Keep this file and `AGENTS.md` in sync when build steps, layout or pitfalls change.
+
 ## Build & Run
 
 - **Prerequisite:** `brew install xcodegen` (project generator)
@@ -26,6 +28,11 @@ xcodebuild -project ClipHistory.xcodeproj -scheme ClipHistory -configuration Deb
 - `project.yml` is the source of truth for the Xcode project (xcodegen spec)
 - Dependencies are declared in `project.yml` and pinned by the Xcode workspace `Package.resolved`
 - After adding new Swift files, run `xcodegen generate` to include them in the Xcode project
+- `ClipHistory.xcodeproj` is committed but generated; never edit `project.pbxproj` by hand, and commit the regenerated project after running `xcodegen generate`
+
+## Testing
+
+Unit tests live in `Tests/ClipHistoryTests/` and run against an in-memory `DatabaseQueue` migrated with `AppDatabase.migrator`, using the `xcodebuild test` command above. When XCTest launches the app as its test host, `StatusBarController` skips starting the menu bar item, clipboard monitor and cleanup scheduler.
 
 ## Architecture
 
@@ -55,5 +62,5 @@ Menu bar app (LSUIElement = true, no Dock icon) for macOS clipboard history.
 ## Common Pitfalls
 
 - **Variable name shadowing:** Don't name a local variable the same as a method (e.g., `let pngData = pngData(from: image)` shadows the method, making the second call fail with "cannot call value of non-function type 'Data'").
-- **GRDB insert is non-mutating:** `PersistableRecord.insert` returns the inserted copy with `id` set; the original struct is unchanged. Discarding the return value loses the auto-incremented id. Use `let inserted = try item.insert(db)` when the id is needed.
+- **GRDB insert returns Void:** `PersistableRecord.insert` returns `Void` and leaves the value untouched. Use `inserted(_:)` (or `insertAndFetch`) to get the copy whose `didInsert` callback has set the row id.
 - **cgImage color loss:** Converting NSImage to PNG via `cgImage` produces transparent images for many NSImage types. Always use `tiffRepresentation` → `NSBitmapImageRep`.
