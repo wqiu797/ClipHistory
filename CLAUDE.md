@@ -24,7 +24,7 @@ xcodebuild -project ClipHistory.xcodeproj -scheme ClipHistory -configuration Deb
 ```
 
 - `project.yml` is the source of truth for the Xcode project (xcodegen spec)
-- `Package.swift` declares SPM dependencies only; the actual Xcode project is generated from `project.yml`
+- Dependencies are declared in `project.yml` and pinned by the Xcode workspace `Package.resolved`
 - After adding new Swift files, run `xcodegen generate` to include them in the Xcode project
 
 ## Architecture

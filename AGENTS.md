@@ -9,7 +9,6 @@ This repository contains a native macOS menu bar app named ClipHistory.
 - `Views/` contains SwiftUI/AppKit UI code, grouped by feature (`MenuBar`, `Cards`, `Search`, `Settings`, `Common`).
 - `Resources/` contains `Info.plist` and `Assets.xcassets`.
 - `project.yml` is the source of truth for the generated Xcode project.
-- `Package.swift` declares Swift Package Manager dependencies.
 - `Tests/ClipHistoryTests/` contains the unit tests, wired into the generated
   project by the `ClipHistoryTests` target.
 
